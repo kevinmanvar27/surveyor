@@ -24,7 +24,7 @@ class EmptySurveyWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Illustration
-            Container(
+            /*Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor.withValues(alpha: isDark ? 0.2 : 0.1),
@@ -36,7 +36,7 @@ class EmptySurveyWidget extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24),*/
 
             // Title
             Text(

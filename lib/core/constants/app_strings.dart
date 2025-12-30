@@ -38,8 +38,11 @@ class AppStringsEn {
   static const String copy = 'Copy';
   static const String share = 'Share';
   static const String print = 'Print';
+  static const String camera = 'Camera';
+  static const String gallery = 'Gallery';
   static const String total = 'Total';
   static const String pending = 'Pending';
+  static const String noSelection = 'No Selection';
   
   // Auth
   static const String login = 'Login';
@@ -229,6 +232,140 @@ class AppStringsEn {
   static const String notifications = 'Notifications';
   static const String general = 'General';
   static const String appearance = 'Appearance';
+  
+  // Support & Help
+  // Privacy Policy Content
+  static const String privacyPolicyContent = '''Road Surveyor respects your privacy. This application collects and stores only the data necessary to provide its services.
+
+Information We Collect:
+• Email address for user authentication
+• Survey data entered by the user
+
+How We Use Data:
+• To authenticate users
+• To store and display survey records
+• To improve app functionality
+
+Data Storage:
+All data is securely stored using Google Firebase services. Data is accessible only to the authenticated user.
+
+Data Sharing:
+We do not share, sell, or distribute user data to third parties.
+
+Data Deletion:
+Users can delete their survey data and account directly from the app.
+
+Security:
+We use industry-standard security measures provided by Firebase to protect user data.''';
+  static const String contactUsMessage = 'For any questions or support, please contact us at:';
+  static const String emailCopied = 'Email copied to clipboard';
+  static const String copyEmail = 'Copy email';
+  
+  // Delete Account
+  static const String deleteAccount = 'Delete Account';
+  static const String deleteAccountWarning = 'This action cannot be undone. All your surveys and account data will be permanently deleted.';
+  static const String deleteAccountConfirmation = 'Are you sure you want to delete your account?';
+  static const String deleteAccountError = 'Failed to delete account. Please try again.';
+  static const String accountDeletedSuccess = 'Account deleted successfully. Goodbye!';
+  
+  // Edit Profile
+  static const String editProfile = 'Edit Profile';
+  static const String editProfileSubtitle = 'Update name, email, company';
+  static const String enterYourName = 'Enter your name';
+  static const String enterYourEmail = 'Enter your email';
+  static const String companyName = 'Company Name';
+  static const String enterCompanyName = 'Enter company name';
+  static const String companyNameRequired = 'Company name is required';
+  static const String profileImage = 'Profile Image';
+  static const String selectProfileImage = 'Select Profile Image';
+  static const String changeProfileImage = 'Change Profile Image';
+  static const String removeProfileImage = 'Remove Profile Image';
+  static const String takeNewPhoto = 'Use camera to take a new photo';
+  static const String selectExistingPhoto = 'Select an existing photo';
+  static const String tapToAddProfilePhoto = 'Tap to add profile photo';
+  static const String tapToEditPhoto = 'Tap to edit photo';
+  static const String cropProfileImage = 'Crop Profile Image';
+  static const String imageCompressedTo = 'Image compressed to';
+  static const String failedToProcessImage = 'Failed to process image';
+  static const String profileUpdatedSuccess = 'Profile updated successfully';
+  static const String profileUpdateFailed = 'Failed to update profile';
+  static const String saveChanges = 'Save Changes';
+  static const String discardChanges = 'Discard Changes';
+  static const String unsavedChanges = 'You have unsaved changes';
+  static const String unsavedChangesMessage = 'Are you sure you want to discard your changes?';
+  
+  // Expenses
+  static const String expenses = 'Expenses';
+  static const String expenseTracking = 'Expense Tracking';
+  static const String expenseTrackingSubtitle = 'Track your survey expenses';
+  static const String addExpense = 'Add Expense';
+  static const String editExpense = 'Edit Expense';
+  static const String deleteExpense = 'Delete Expense';
+  static const String expenseDescription = 'Description';
+  static const String enterExpenseDescription = 'Enter expense description';
+  static const String expenseAmount = 'Amount';
+  static const String enterExpenseAmount = 'Enter amount';
+  static const String expenseCategory = 'Category';
+  static const String selectCategory = 'Select Category';
+  static const String expenseDate = 'Date';
+  static const String selectDate = 'Select Date';
+  static const String dailyExpenses = 'Daily';
+  static const String weeklyExpenses = 'Weekly';
+  static const String monthlyExpenses = 'Monthly';
+  static const String yearlyExpenses = 'Yearly';
+  static const String allExpenses = 'All Time';
+  static const String totalExpenses = 'Total Expenses';
+  static const String noExpenses = 'No expenses found';
+  static const String noExpensesDescription = 'Add your first expense to start tracking';
+  static const String expenseAdded = 'Expense added successfully';
+  static const String expenseUpdated = 'Expense updated successfully';
+  static const String expenseDeleted = 'Expense deleted successfully';
+  static const String deleteExpenseConfirmation = 'Are you sure you want to delete this expense?';
+  static const String expenseDescriptionRequired = 'Description is required';
+  static const String expenseAmountRequired = 'Amount is required';
+  static const String invalidExpenseAmount = 'Please enter a valid amount';
+  
+  // Expense Categories
+  static const String categoryTravel = 'Travel';
+  static const String categoryEquipment = 'Equipment';
+  static const String categoryFood = 'Food';
+  static const String categoryFuel = 'Fuel';
+  static const String categoryAccommodation = 'Accommodation';
+  static const String categoryCommunication = 'Communication';
+  static const String categoryOther = 'Other';
+  
+  // Expense Summary
+  static const String expenseSummary = 'Expense Summary';
+  static const String byCategory = 'By Category';
+  static const String recentExpenses = 'Recent Expenses';
+  static const String viewAll = 'View All';
+  static const String items = 'items';
+  
+  // Survey-Expense Linking
+  static const String selectSurvey = 'Select Survey';
+  static const String linkToSurvey = 'Link to Survey';
+  static const String noWaitingSurveys = 'No surveys waiting';
+  static const String surveyExpenses = 'Survey Expenses';
+  static const String addExpenseForSurvey = 'Add Expense for Survey';
+  static const String linkedToSurvey = 'Linked to Survey';
+  static const String noLinkedExpenses = 'No expenses linked to this survey';
+  static const String optional = 'Optional';
+  
+  // Image Crop Confirmation
+  static const String cropImage = 'Crop Image';
+  static const String cropImageConfirmation = 'Do you want to crop this image?';
+  static const String cropImageYes = 'Crop';
+  static const String cropImageNo = 'Use As Is';
+  
+  // Survey Form - Expenses Section
+  static const String surveyExpensesSection = 'Expenses';
+  static const String addExpenseToSurvey = 'Add Expense';
+  static const String noExpensesForSurvey = 'No expenses added yet';
+  static const String tapToAddExpense = 'Tap + to add expense for this survey';
+  
+  // Expense Screen - Calendar Picker
+  static const String selectDateToView = 'Select Date';
+  static const String jumpToDate = 'Jump to Date';
 }
 
 /// Hindi Strings
@@ -271,8 +408,11 @@ class AppStringsHi {
   static const String copy = 'कॉपी';
   static const String share = 'साझा करें';
   static const String print = 'प्रिंट';
+  static const String camera = 'कैमरा';
+  static const String gallery = 'गैलरी';
   static const String total = 'कुल';
   static const String pending = 'बाकी';
+  static const String noSelection = 'कोई चयन नहीं';
   
   // Auth
   static const String login = 'लॉगिन';
@@ -338,8 +478,8 @@ class AppStringsHi {
   static const String resendOtpIn = 'OTP पुनः भेजें';
   static const String verify = 'सत्यापित करें';
   static const String changePhoneNumber = 'ફોન નંબર બદલો';
-  static const String noSearchResults = 'कोઈ खोज परिणामો નહीं';
-  static const String addFirstSurvey = 'शुરू करने के लिए अपना पहला सर्वे जोड़ें';
+  static const String noSearchResults = 'कोई खोज परिणामો નહीं';
+  static const String addFirstSurvey = 'शुरू करने के लिए अपना पहला सर्वे जोड़ें';
   
   // Survey
   static const String surveys = 'सर्वे';
@@ -462,6 +602,119 @@ class AppStringsHi {
   static const String notifications = 'सूचनाएं';
   static const String general = 'सामान्य';
   static const String appearance = 'दिखावट';
+  
+  // Support & Help
+  // Privacy Policy Content (same in all languages as it's a legal document)
+  static const String privacyPolicyContent = AppStringsEn.privacyPolicyContent;
+  static const String contactUsMessage = 'किसी भी प्रश्न या सहायता के लिए, कृपया हमसे संपर्क करें:';
+  static const String emailCopied = 'ईमेल क्लिपबोर्ड पर कॉपी किया गया';
+  static const String copyEmail = 'ईमेल कॉपी करें';
+  
+  // Delete Account
+  static const String deleteAccount = 'खाता हटाएं';
+  static const String deleteAccountWarning = 'यह क्रिया पूर्ववत नहीं की जा सकती। आपके सभी सर्वे और खाता डेटा स्थायी रूप से हटा दिए जाएंगे।';
+  static const String deleteAccountConfirmation = 'क्या आप वाकई अपना खाता हटाना चाहते हैं?';
+  static const String deleteAccountError = 'खाता हटाने में विफल। कृपया पुनः प्रयास करें।';
+  static const String accountDeletedSuccess = 'खाता सफलतापूर्वक हटाया गया। अलविदा!';
+  
+  // Edit Profile
+  static const String editProfile = 'प्रोफ़ाइल संपादित करें';
+  static const String editProfileSubtitle = 'नाम, ईमेल, कंपनी अपडेट करें';
+  static const String enterYourName = 'अपना नाम दर्ज करें';
+  static const String enterYourEmail = 'अपना ईमेल दर्ज करें';
+  static const String companyName = 'कंपनी का नाम';
+  static const String enterCompanyName = 'कंपनी का नाम दर्ज करें';
+  static const String companyNameRequired = 'कंपनी का नाम आवश्यक है';
+  static const String profileImage = 'प्रोफ़ाइल छवि';
+  static const String selectProfileImage = 'प्रोफ़ाइल छवि चुनें';
+  static const String changeProfileImage = 'प्रोफ़ाइल छवि बदलें';
+  static const String removeProfileImage = 'प्रोफ़ाइल छवि हटाएं';
+  static const String takeNewPhoto = 'नई फ़ोटो लेने के लिए कैमरा का उपयोग करें';
+  static const String selectExistingPhoto = 'मौजूदा फ़ोटो चुनें';
+  static const String tapToAddProfilePhoto = 'प्रोफ़ाइल फ़ोटो जोड़ने के लिए टैप करें';
+  static const String tapToEditPhoto = 'फ़ोटो संपादित करने के लिए टैप करें';
+  static const String cropProfileImage = 'प्रोफ़ाइल छवि क्रॉप करें';
+  static const String imageCompressedTo = 'छवि संपीड़ित की गई';
+  static const String failedToProcessImage = 'छवि प्रोसेस करने में विफल';
+  static const String profileUpdatedSuccess = 'प्रोफ़ाइल सफलतापूर्वक अपडेट की गई';
+  static const String profileUpdateFailed = 'प्रोफ़ाइल अपडेट करने में विफल';
+  static const String saveChanges = 'परिवर्तन सहेजें';
+  static const String discardChanges = 'परिवर्तन छोड़ें';
+  static const String unsavedChanges = 'आपके पास असहेजे परिवर्तन हैं';
+  static const String unsavedChangesMessage = 'क्या आप वाकई अपने परिवर्तन छोड़ना चाहते हैं?';
+  
+  // Expenses
+  static const String expenses = 'खर्चे';
+  static const String expenseTracking = 'खर्च ट्रैकिंग';
+  static const String expenseTrackingSubtitle = 'अपने सर्वे खर्चों को ट्रैक करें';
+  static const String addExpense = 'खर्च जोड़ें';
+  static const String editExpense = 'खर्च संपादित करें';
+  static const String deleteExpense = 'खर्च हटाएं';
+  static const String expenseDescription = 'विवरण';
+  static const String enterExpenseDescription = 'खर्च का विवरण दर्ज करें';
+  static const String expenseAmount = 'राशि';
+  static const String enterExpenseAmount = 'राशि दर्ज करें';
+  static const String expenseCategory = 'श्रेणी';
+  static const String selectCategory = 'श्रेणी चुनें';
+  static const String expenseDate = 'तारीख';
+  static const String selectDate = 'तारीख चुनें';
+  static const String dailyExpenses = 'दैनिक';
+  static const String weeklyExpenses = 'साप्ताहिक';
+  static const String monthlyExpenses = 'मासिक';
+  static const String yearlyExpenses = 'वार्षिक';
+  static const String allExpenses = 'सभी समय';
+  static const String totalExpenses = 'कुल खर्च';
+  static const String noExpenses = 'कोई खर्च नहीं मिला';
+  static const String noExpensesDescription = 'ट्रैकिंग शुरू करने के लिए अपना पहला खर्च जोड़ें';
+  static const String expenseAdded = 'खर्च सफलतापूर्वक जोड़ा गया';
+  static const String expenseUpdated = 'खर्च सफलतापूर्वक अपडेट किया गया';
+  static const String expenseDeleted = 'खर्च सफलतापूर्वक हटाया गया';
+  static const String deleteExpenseConfirmation = 'क्या आप वाकई इस खर्च को हटाना चाहते हैं?';
+  static const String expenseDescriptionRequired = 'विवरण आवश्यक है';
+  static const String expenseAmountRequired = 'राशि आवश्यक है';
+  static const String invalidExpenseAmount = 'कृपया एक वैध राशि दर्ज करें';
+  
+  // Expense Categories
+  static const String categoryTravel = 'यात्रा';
+  static const String categoryEquipment = 'उपकरण';
+  static const String categoryFood = 'भोजन';
+  static const String categoryFuel = 'ईंधन';
+  static const String categoryAccommodation = 'आवास';
+  static const String categoryCommunication = 'संचार';
+  static const String categoryOther = 'अन्य';
+  
+  // Expense Summary
+  static const String expenseSummary = 'खर्च सारांश';
+  static const String byCategory = 'श्रेणी के अनुसार';
+  static const String recentExpenses = 'हाल के खर्चे';
+  static const String viewAll = 'सभी देखें';
+  static const String items = 'आइटम';
+  
+  // Survey-Expense Linking
+  static const String selectSurvey = 'सर्वे चुनें';
+  static const String linkToSurvey = 'सर्वे तक जोड़ें';
+  static const String noWaitingSurveys = 'कोई सर्वे नहीं अपडेट करने के लिए चिह्नित';
+  static const String surveyExpenses = 'सर्वे खर्च';
+  static const String addExpenseForSurvey = 'सर्वे के लिए खर्च जोड़ें';
+  static const String linkedToSurvey = 'सर्वे तक जोड़ा गया';
+  static const String noLinkedExpenses = 'इस सर्वे के लिए कोई जोड़े खर्च नहीं';
+  static const String optional = 'वैकल्पिक';
+  
+  // Image Crop Confirmation
+  static const String cropImage = 'छवि क्रॉप करें';
+  static const String cropImageConfirmation = 'क्या आप इस छवि को क्रॉप करना चाहते हैं?';
+  static const String cropImageYes = 'क्रॉप';
+  static const String cropImageNo = 'सेट अस्तित्व के अनुसार';
+  
+  // Survey Form - Expenses Section
+  static const String surveyExpensesSection = 'खर्चे';
+  static const String addExpenseToSurvey = 'खर्च जोड़ें';
+  static const String noExpensesForSurvey = 'अभी तक कोई खर्च नहीं जोड़ा';
+  static const String tapToAddExpense = 'इस सर्वे के लिए खर्च जोड़ने के लिए + टैप करें';
+  
+  // Expense Screen - Calendar Picker
+  static const String selectDateToView = 'तारीख चुनें';
+  static const String jumpToDate = 'तारीख पर जाएं';
 }
 
 /// Gujarati Strings
@@ -504,8 +757,11 @@ class AppStringsGu {
   static const String copy = 'કૉપી';
   static const String share = 'શેર કરો';
   static const String print = 'પ્રિન્ટ';
+  static const String camera = 'કેમેરા';
+  static const String gallery = 'ગેલેરી';
   static const String total = 'કુલ';
   static const String pending = 'બાકી';
+  static const String noSelection = 'કોઈ પસંદગી નથી';
   
   // Auth
   static const String login = 'લૉગિન';
@@ -523,7 +779,7 @@ class AppStringsGu {
   static const String loginWithEmail = 'ઈમેલથી લૉગિન કરો';
   static const String forgotPassword = 'પાસવર્ડ ભૂલી ગયા?';
   static const String resetPassword = 'પાસવર્ડ રીસેટ કરો';
-  static const String invalidEmail = 'અમાન્ય ઈમેલ સરનામું';
+  static const String invalidEmail = 'અમાન્ય ઈમेल સરનામું';
   static const String invalidPassword = 'પાસવર્ડ ઓછામાં ઓછા 6 અક્ષરનો હોવો જોઈએ';
   static const String invalidPhone = 'અમાન્ય ફોન નંબર';
   static const String authFailed = 'પ્રમાણીકરણ નિષ્ફળ';
@@ -542,17 +798,17 @@ class AppStringsGu {
   static const String enterEmailForReset = 'પાસવર્ડ રીસેટ લિંક મેળવવા માટે તમારો ઈમેલ દાખલ કરો';
   static const String enterEmailToReset = 'તમારું ઈમેલ સરનામું દાખલ કરો અને અમે તમને પાસવર્ડ રીસેટ કરવા માટે લિંક મોકલીશું';
   static const String resetLinkSent = 'પાસવર્ડ રીસેટ લિંક તમારા ઈમેલ પર મોકલવામાં આવી';
-  static const String passwordsDoNotMatch = 'પાસવર્ડ મેળ ખાતા નથી';
+  static const String passwordsDoNotMatch = 'પાસવર્ડ મे�ળ ખાતા નથી';
   static const String enterEmail = 'તમારો ઈમેલ દાખલ કરો';
   static const String enterPassword = 'તમારો પાસવર્ડ દાખલ કરો';
   static const String enterPhoneNumber = 'તમારો ફોન નંબર દાખલ કરો';
   static const String notLoggedIn = 'લૉગિન નથી';
-  static const String emailRequired = 'ઈમેલ જરૂરી છે';
+  static const String emailRequired = 'ईમेल જરૂરી છે';
   static const String passwordRequired = 'પાસવર્ડ જરૂરી છે';
   static const String sendResetLink = 'રીસેટ લિંક મોકલો';
   static const String backToLogin = 'લૉગિન પર પાછા જાઓ';
-  static const String emailSent = 'ઈમેલ મોકલ્યો!';
-  static const String checkEmailForReset = 'પાસવર્ડ રીસેટ કરવા માટે તમારો ઈમેલ તપાસો';
+  static const String emailSent = 'ઈમेल મોકલ્યો!';
+  static const String checkEmailForReset = 'પાસવર્ડ રીસેટ કરવા માટે તમારો ઈમेल તપાસો';
   static const String openEmailApp = 'ઈમેલ એપ ખોલો';
   static const String tryDifferentEmail = 'અલગ ઈમેલ અજમાવો';
   static const String loginToYourAccount = 'તમારા એકાઉન્ટમાં લૉગિન કરો';
@@ -571,7 +827,7 @@ class AppStringsGu {
   static const String resendOtpIn = 'OTP ફરીથી મોકલો';
   static const String verify = 'ચકાસો';
   static const String changePhoneNumber = 'ફોન નંબર બદલો';
-  static const String noSearchResults = 'કોઈ શોધ પરિણામો નથી';
+  static const String noSearchResults = 'કોઈ શોધ પરિણામો નહીં';
   static const String addFirstSurvey = 'શરૂ કરવા માટે તમારો પ્રથમ સર્વે ઉમેરો';
   
   // Survey
@@ -582,7 +838,7 @@ class AppStringsGu {
   static const String villageName = 'ગામનું નામ';
   static const String surveyNumber = 'સર્વે નંબર';
   static const String mobileNumber = 'મોબાઇલ નંબર';
-  static const String applicantName = 'અરજદારનું નામ';
+  static const String applicantName = 'આવेदक का નામ';
   static const String mapType = 'નકશાનો પ્રકાર';
   static const String government = 'સરકારી';
   static const String private = 'ખાનગી';
@@ -626,7 +882,7 @@ class AppStringsGu {
   static const String phoneCopied = 'ફોન નંબર કૉપી થયો';
   static const String paymentPending = 'ચુકવણી બાકી';
   static const String current = 'વર્તમાન';
-  static const String tapToViewInvoice = 'ઇન્વોઇસ જોવા ટેપ કરો';
+  static const String tapToViewInvoice = 'इન્વોઇસ જોવા ટેપ કરો';
   static const String noSurveys = 'કોઈ સર્વે મળ્યા નથી';
   static const String noSurveysDescription = 'શરૂ કરવા માટે તમારો પ્રથમ સર્વે ઉમેરો';
   static const String noMatchingSurveys = 'કોઈ મેળ ખાતા સર્વે નથી';
@@ -641,30 +897,30 @@ class AppStringsGu {
   static const String enterNotes = 'નોંધ દાખલ કરો (વૈકલ્પિક)';
   
   // Invoice
-  static const String invoice = 'ઇન્વોઇસ';
-  static const String generateInvoice = 'ઇન્વોઇસ બનાવો';
-  static const String downloadInvoice = 'ઇન્વોઇસ ડાઉનલોડ કરો';
-  static const String invoiceGenerated = 'ઇન્વોઇસ સફળતાપૂર્વક બનાવ્યો';
-  static const String invoiceDownloaded = 'ઇન્વોઇસ સફળતાપૂર્વક ડાઉનલોડ થયો';
-  static const String invoiceNumber = 'ઇન્વોઇસ નંબર';
-  static const String invoiceDate = 'ઇન્વોઇસ તારીખ';
+  static const String invoice = 'इન્વોઇસ';
+  static const String generateInvoice = 'इન્વોઇસ બનાવો';
+  static const String downloadInvoice = 'इન્વોઇસ ડાઉનલોડ કરો';
+  static const String invoiceGenerated = 'इન્વોઇસ સફળતાપૂર્વક બનાવ્યો';
+  static const String invoiceDownloaded = 'इન્વોઇસ સફળતાપૂર્વક ડાઉનલોડ થયો';
+  static const String invoiceNumber = 'इન્વોઇસ નંબર';
+  static const String invoiceDate = 'इન્વોઇસ તારીખ';
   static const String paymentDetails = 'ચુકવણી વિગતો';
   static const String surveyInfo = 'સર્વે માહિતી';
   static const String thankYou = 'તમારા વ્યવસાય માટે આભાર!';
-  static const String invoiceNotAvailable = 'ઇન્વોઇસ ઉપલબ્ધ નથી';
-  static const String surveyMustBeDone = 'ઇન્વોઇસ બનાવવા માટે સર્વે પૂર્ણ તરીકે ચિહ્નિત હોવો જોઈએ';
+  static const String invoiceNotAvailable = 'इન્વોઇસ ઉપલબ્ધ નહીં';
+  static const String surveyMustBeDone = 'इન્વોઇસ બનાવવા માટે સર્વે પૂર્ણ તરીકે ચિહ્નિત હોવો જોઈએ';
   static const String currentStatus = 'વર્તમાન સ્થિતિ';
-  static const String invoiceDetails = 'ઇન્વોઇસ વિગતો';
-  static const String isGenerating = 'ઇન્વોઇસ બનાવી રહ્યા છીએ...';
-  static const String generateInvoiceTitle = 'ઇન્વોઇસ બનાવો';
+  static const String invoiceDetails = 'इન્વોઇસ વિગતો';
+  static const String isGenerating = 'इન્વોઇસ બનાવી રહ્યા છીએ...';
+  static const String generateInvoiceTitle = 'इન્વોઇસ બનાવો';
   static const String generateInvoiceDescription = 'આ સર્વે માટે PDF ઇન્વોઇસ બનાવો';
-  static const String invoiceReady = 'ઇન્વોઇસ તૈયાર';
+  static const String invoiceReady = 'इન્વોઇસ તૈયાર';
   static const String invoiceReadyDescription = 'તમારો ઇન્વોઇસ બની ગયો છે';
-  static const String shareInvoice = 'ઇન્વોઇસ શેર કરો';
+  static const String shareInvoice = 'इન્વોઇસ શેર કરો';
   static const String uploadToCloud = 'ક્લાઉડ પર અપલોડ કરો';
-  static const String regenerateInvoice = 'ઇન્વોઇસ ફરીથી બનાવો';
+  static const String regenerateInvoice = 'इન્વોઇસ ફરીથી બનાવો';
   static const String uploadedToCloud = 'ક્લાઉડ પર અપલોડ થયો';
-  static const String invoiceUploaded = 'ઇન્વોઇસ સફળતાપૂર્વક અપલોડ થયો';
+  static const String invoiceUploaded = 'इન્વોઇસ સફળતાપૂર્વક અપલોડ થયો';
   static const String preview = 'પૂર્વાવલોકન';
   static const String download = 'ડાઉનલોડ';
   
@@ -676,11 +932,11 @@ class AppStringsGu {
   
   // Settings
   static const String settings = 'સેટિંગ્સ';
-  static const String language = 'ભાષા';
+  static const String language = 'ભાષা';
   static const String english = 'English';
   static const String hindi = 'हिंदी';
   static const String gujarati = 'ગુજરાતી';
-  static const String selectLanguage = 'ભાષા પસંદ કરો';
+  static const String selectLanguage = 'ભાષা પસંદ કરો';
   static const String profile = 'પ્રોફાઇલ';
   static const String about = 'વિશે';
   static const String version = 'આવૃત્તિ';
@@ -695,4 +951,117 @@ class AppStringsGu {
   static const String notifications = 'સૂચનાઓ';
   static const String general = 'સામાન્ય';
   static const String appearance = 'દેખાવ';
+  
+  // Support & Help
+  // Privacy Policy Content (same in all languages as it's a legal document)
+  static const String privacyPolicyContent = AppStringsEn.privacyPolicyContent;
+  static const String contactUsMessage = 'કોઈપણ પ્રશ્ન અથવા સહાય માટે, કૃપા કરીને અમારો સંપર્ક કરો:';
+  static const String emailCopied = 'ઈમેલ ક્લિપબોર્ડ પર કૉપી થયો';
+  static const String copyEmail = 'ઈમેલ કૉપી કરો';
+  
+  // Delete Account
+  static const String deleteAccount = 'એકાઉન્ટ કાઢી નાખો';
+  static const String deleteAccountWarning = 'આ ક્રિયા પૂર્વવત્ કરી શકાતી નથી. તમારા બધા સર્વે અને એકાઉન્ટ ડેટા કાયમ માટે કાઢી નાખવામાં આવશે.';
+  static const String deleteAccountConfirmation = 'શું તમે ખરેખર તમારું એકાઉન્ટ કાઢી નાખવા માંગો છો?';
+  static const String deleteAccountError = 'એકાઉન્ટ કાઢી નાખવામાં નિષ્ફળ. કૃપા કરીને ફરી પ્રયાસ કરો.';
+  static const String accountDeletedSuccess = 'એકાઉન્ટ સફળતાપૂર્વક કાઢી નાખવામાં આવ્યું. આવજો!';
+  
+  // Edit Profile
+  static const String editProfile = 'પ્રોફાઇલ સંપાદિત કરો';
+  static const String editProfileSubtitle = 'નામ, ઇમેઇલ, કંપની અપડેટ કરો';
+  static const String enterYourName = 'તમારું નામ દાખલ કરો';
+  static const String enterYourEmail = 'તમારો ઇમેઇલ દાખલ કરો';
+  static const String companyName = 'કંપનીનું નામ';
+  static const String enterCompanyName = 'કંપનીનું નામ દાખલ કરો';
+  static const String companyNameRequired = 'કંપનીનું નામ જરૂરી છે';
+  static const String profileImage = 'પ્રોફાઇલ છબી';
+  static const String selectProfileImage = 'પ્રોફાઇલ છબી પસંદ કરો';
+  static const String changeProfileImage = 'પ્રોફાઇલ છબી બદલો';
+  static const String removeProfileImage = 'પ્રોફાઇલ છબી દૂર કરો';
+  static const String takeNewPhoto = 'નવી ફોટો લેવા માટે કેમેરા વાપરો';
+  static const String selectExistingPhoto = 'હાજર ફોટો પસંદ કરો';
+  static const String tapToAddProfilePhoto = 'પ્રોફાઇલ ફોટો ઉમેરવા માટે ટેપ કરો';
+  static const String tapToEditPhoto = 'ફોટો સંપાદિત કરવા માટે ટેપ કરો';
+  static const String cropProfileImage = 'પ્રોફાઇલ છબી ક્રોપ કરો';
+  static const String imageCompressedTo = 'છબી સંપીડિત કરવામાં આવી';
+  static const String failedToProcessImage = 'છબી પ્રક્રિયા કરવામાં નિષ્ફળ';
+  static const String profileUpdatedSuccess = 'પ્રોફાઇલ સફળતાપૂર્વક અપડેટ થઈ';
+  static const String profileUpdateFailed = 'પ્રોફાઇલ અપડેટ કરવામાં નિષ્ફળ';
+  static const String saveChanges = 'ફેરફારો સાચવો';
+  static const String discardChanges = 'ફેરફારો કાઢી નાખો';
+  static const String unsavedChanges = 'તમારી પાસે અસાચવેલા ફેરફારો છે';
+  static const String unsavedChangesMessage = 'શું તમે ખરેખર તમારા ફેરફારો કાઢી નાખવા માંગો છો?';
+  
+  // Expenses
+  static const String expenses = 'ખર્ચ';
+  static const String expenseTracking = 'ખર્ચ ટ્રેકિંગ';
+  static const String expenseTrackingSubtitle = 'તમારા સર્વે ખર્ચને ટ્રેક કરો';
+  static const String addExpense = 'ખર્ચ જોડ़ें';
+  static const String editExpense = 'ખર્ચ સંપાદિત કરें';
+  static const String deleteExpense = 'ખર્ચ हटाएं';
+  static const String expenseDescription = 'વર્ણન';
+  static const String enterExpenseDescription = 'ખર્ચનું વર્ણન દાખલ કરો';
+  static const String expenseAmount = 'રકમ';
+  static const String enterExpenseAmount = 'રકમ દાખલ કરો';
+  static const String expenseCategory = 'શ્રેણી';
+  static const String selectCategory = 'શ્રેણી પસંદ કરો';
+  static const String expenseDate = 'તારીખ';
+  static const String selectDate = 'તારીખ પસંદ કરો';
+  static const String dailyExpenses = 'દૈનિક';
+  static const String weeklyExpenses = 'સાપ્તાહિ�';
+  static const String monthlyExpenses = 'માસિ�';
+  static const String yearlyExpenses = 'વાર્ષિક';
+  static const String allExpenses = 'બધા સમય';
+  static const String totalExpenses = 'કુલ ખર્ચ';
+  static const String noExpenses = 'કોઈ ખર્ચ નહીં મિલ્યો';
+  static const String noExpensesDescription = 'ટ્રેકિંગ શરૂ કરવા માટે તમારો પ્રથમ ખર્ચ ઉમેરો';
+  static const String expenseAdded = 'ખર્ચ સફળતાપૂર્વક ઉમેરાયો';
+  static const String expenseUpdated = 'ખર્ચ સફળતાપૂર્વક અપડેટ થયો';
+  static const String expenseDeleted = 'ખર્ચ સફળતાપૂર્વક કાઢી નાખવામાં આવ્યો';
+  static const String deleteExpenseConfirmation = 'શું તમે ખરેખર આ ખર્ચ કાઢી નાખવા માંગો છો?';
+  static const String expenseDescriptionRequired = 'વર્ણન જરૂરી છે';
+  static const String expenseAmountRequired = 'રકમ જરૂરી છે';
+  static const String invalidExpenseAmount = 'કૃપા કરીને માન્ય રકમ દાખલ કરો';
+  
+  // Expense Categories
+  static const String categoryTravel = 'મુસાફરી';
+  static const String categoryEquipment = 'સાધનો';
+  static const String categoryFood = 'ભોજન';
+  static const String categoryFuel = 'ઇંધણ';
+  static const String categoryAccommodation = 'રહેઠાણ';
+  static const String categoryCommunication = 'સંચાર';
+  static const String categoryOther = 'અન્ય';
+  
+  // Expense Summary
+  static const String expenseSummary = 'ખર્ચ સારાંશ';
+  static const String byCategory = 'શ્રેણી પ્રમાણે';
+  static const String recentExpenses = 'તાજેતરના ખર્ચ';
+  static const String viewAll = 'બધા જુઓ';
+  static const String items = 'આઇટમ્સ';
+  
+  // Survey-Expense Linking
+  static const String selectSurvey = 'સર્વે ચુંછો';
+  static const String linkToSurvey = 'સર્વે તક જોડો';
+  static const String noWaitingSurveys = 'કોઈ સર્વે નહીં અપડેટ કરવા માટે ચિહ્નિત';
+  static const String surveyExpenses = 'સર્વે ખર્ચ';
+  static const String addExpenseForSurvey = 'સર્વે માટે ખર્ચ જોડાવો';
+  static const String linkedToSurvey = 'સર્વે તક જોડાયો';
+  static const String noLinkedExpenses = 'આ સર્વે માટે કોઈ જોડાયેલ ખર્ચ નથી';
+  static const String optional = 'વૈકલ્પિક';
+  
+  // Image Crop Confirmation
+  static const String cropImage = 'छવી ક્રોપ કરો';
+  static const String cropImageConfirmation = 'કૃપા કરીને આ છવી ક્રોપ કરવા માંગો છો?';
+  static const String cropImageYes = 'ક્રોપ';
+  static const String cropImageNo = 'સેટ અસ્તિત્વ કે ઉપયોગ કરો';
+  
+  // Survey Form - Expenses Section
+  static const String surveyExpensesSection = 'ખર્ચ';
+  static const String addExpenseToSurvey = 'ખર્ચ ઉમેરો';
+  static const String noExpensesForSurvey = 'હજુ સુધી કોઈ ખર્ચ ઉમેર્યો નથી';
+  static const String tapToAddExpense = 'આ સર્વે માટે ખર્ચ ઉમેરવા + ટેપ કરો';
+  
+  // Expense Screen - Calendar Picker
+  static const String selectDateToView = 'તારીખ પસંદ કરો';
+  static const String jumpToDate = 'તારીખ પર જાઓ';
 }

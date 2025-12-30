@@ -7,12 +7,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/config/app_config.dart';
 import 'core/config/firebase_options.dart';
 import 'core/constants/app_constants.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/localization/localization_provider.dart';
-import 'demo_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,10 +52,8 @@ class SurveyorApp extends ConsumerWidget {
     // This triggers the sunset monitoring when enabled
     ref.watch(autoSunsetModeProvider);
     
-    // Update system UI overlay style based on theme
-    final isDark = themeMode == ThemeMode.dark ||
-        (themeMode == ThemeMode.system &&
-            MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+    // Always use light theme for system UI overlay as dark theme is disabled
+    final isDark = false;
     
     // iOS-style system UI overlay
     SystemChrome.setSystemUIOverlayStyle(
@@ -75,8 +73,8 @@ class SurveyorApp extends ConsumerWidget {
       
       // Apple-style themes
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+      themeMode: ThemeMode.light,
+      // Remove dark theme support as per requirements
       
       // Localization
       locale: locale,
@@ -92,12 +90,10 @@ class SurveyorApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       
-      // Routing - using routes instead of router for now
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const DemoScreen(),
-      },
-      
+      // Routing
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: AppRouter.generateRoute,
+
       // iOS-style scroll behavior
       scrollBehavior: const AppleScrollBehavior(),
       

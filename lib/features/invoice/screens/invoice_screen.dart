@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/localization/app_localizations.dart';
@@ -114,8 +115,17 @@ class _InvoiceScreenState extends ConsumerState<InvoiceScreen> {
           SnackBar(
             content: Text(loc.invoiceDownloaded),
             backgroundColor: AppColors.success,
+            action: SnackBarAction(
+              label: 'Open',
+              textColor: Colors.white,
+              onPressed: () {
+                OpenFilex.open(next.localFilePath!);
+              },
+            ),
           ),
         );
+        // Automatically try to open it
+        OpenFilex.open(next.localFilePath!);
       }
       
       // Check for successful upload (downloadUrl set and not uploading)

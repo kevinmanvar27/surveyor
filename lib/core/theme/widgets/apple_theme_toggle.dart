@@ -51,14 +51,14 @@ class AppleThemeToggle extends ConsumerWidget {
             onTap: () => ref.read(themeModeProvider.notifier).setLight(),
             isDark: isDark,
           ),
-          _buildToggleButton(
+          /*_buildToggleButton(
             context: context,
             ref: ref,
             icon: Icons.dark_mode_outlined,
             isSelected: themeMode == ThemeMode.dark,
             onTap: () => ref.read(themeModeProvider.notifier).setDark(),
             isDark: isDark,
-          ),
+          ),*/
           _buildToggleButton(
             context: context,
             ref: ref,
@@ -118,7 +118,7 @@ class AppleThemeToggle extends ConsumerWidget {
                 isDark: isDark,
               ),
               const SizedBox(width: AppSpacing.iosXs),
-              _buildFullToggleButton(
+              /*_buildFullToggleButton(
                 context: context,
                 ref: ref,
                 icon: Icons.dark_mode_outlined,
@@ -126,7 +126,7 @@ class AppleThemeToggle extends ConsumerWidget {
                 isSelected: themeMode == ThemeMode.dark,
                 onTap: () => ref.read(themeModeProvider.notifier).setDark(),
                 isDark: isDark,
-              ),
+              ),*/
               const SizedBox(width: AppSpacing.iosXs),
               _buildFullToggleButton(
                 context: context,
@@ -252,14 +252,14 @@ class AppleSegmentedThemeControl extends ConsumerWidget {
             onTap: () => ref.read(themeModeProvider.notifier).setLight(),
             isDark: isDark,
           ),
-          _buildSegment(
+         /* _buildSegment(
             context: context,
             ref: ref,
             text: 'Dark',
             isSelected: themeMode == ThemeMode.dark,
             onTap: () => ref.read(themeModeProvider.notifier).setDark(),
             isDark: isDark,
-          ),
+          ),*/
           _buildSegment(
             context: context,
             ref: ref,

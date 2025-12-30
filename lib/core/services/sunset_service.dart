@@ -17,12 +17,8 @@ class SunsetService {
   /// Check if current time is after sunset
   /// Uses approximate sunset times based on month (for general use)
   bool isAfterSunset() {
-    final now = DateTime.now();
-    final sunsetTime = _getApproximateSunsetTime(now);
-    final sunriseTime = _getApproximateSunriseTime(now);
-    
-    // It's dark if we're after sunset OR before sunrise
-    return now.isAfter(sunsetTime) || now.isBefore(sunriseTime);
+    // Always return false as we're using light-only theme
+    return false;
   }
   
   /// Get approximate sunset time for the current day
@@ -80,19 +76,17 @@ class SunsetService {
   
   /// Start monitoring for sunset/sunrise transitions
   void startMonitoring({required void Function(bool isDark) onSunsetChange}) {
-    // Check immediately
-    final isDark = isAfterSunset();
-    onSunsetChange(isDark);
+    // Always report light mode for light-only theme
+    onSunsetChange(false);
     
-    // Check every minute for sunset/sunrise transition
+    // Check every minute for sunset/sunrise transition (but always report light)
     _sunsetCheckTimer?.cancel();
     _sunsetCheckTimer = Timer.periodic(const Duration(minutes: 1), (_) {
-      final currentlyDark = isAfterSunset();
-      onSunsetChange(currentlyDark);
-      _sunsetController.add(currentlyDark);
+      onSunsetChange(false); // Always report light mode
+      _sunsetController.add(false);
     });
     
-    debugPrint('SunsetService: Monitoring started. Currently ${isDark ? "dark" : "light"}');
+    debugPrint('SunsetService: Monitoring started. Always in light mode');
   }
   
   /// Stop monitoring

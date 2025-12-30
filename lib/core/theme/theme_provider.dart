@@ -17,7 +17,8 @@ final autoSunsetModeProvider = StateNotifierProvider<AutoSunsetNotifier, bool>((
 });
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.system) {
+  ThemeModeNotifier() : super(ThemeMode.light) {
+    // Always use light theme as per requirements
     _loadSavedTheme();
   }
   
@@ -39,26 +40,18 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   }
   
   void setLight() => setThemeMode(ThemeMode.light);
-  void setDark() => setThemeMode(ThemeMode.dark);
+  // Removed dark theme functionality as per requirements
   void setSystem() => setThemeMode(ThemeMode.system);
   
   void toggleTheme() {
-    if (state == ThemeMode.light) {
-      setDark();
-    } else if (state == ThemeMode.dark) {
-      setLight();
-    } else {
-      // If system, switch to light
-      setLight();
-    }
+    // Always stay in light theme as per requirements
+    setLight();
   }
   
   /// Check if currently in dark mode
   bool isDarkMode(BuildContext context) {
-    if (state == ThemeMode.dark) return true;
-    if (state == ThemeMode.light) return false;
-    // System mode - check platform brightness
-    return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    // Always return false as dark mode is disabled
+    return false;
   }
 }
 
@@ -67,33 +60,27 @@ class AutoSunsetNotifier extends StateNotifier<bool> {
   final SunsetService _sunsetService = SunsetService.instance;
   
   AutoSunsetNotifier(this._ref) : super(false) {
-    _loadSavedSetting();
+    // Don't load saved setting since auto-sunset is disabled in light-only theme
+    // Always keep it disabled
+    state = false;
   }
   
-  Future<void> _loadSavedSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Default to true for auto-sunset mode
-    final enabled = prefs.getBool(_prefAutoSunset) ?? true;
-    state = enabled;
-    
-    if (enabled) {
-      _startSunsetMonitoring();
-    }
-  }
+  // Removed _loadSavedSetting as auto-sunset is disabled in light-only theme
   
   Future<void> setAutoSunset(bool enabled) async {
-    state = enabled;
+    // Always keep auto-sunset disabled for light-only theme
+    state = false;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_prefAutoSunset, enabled);
+    await prefs.setBool(_prefAutoSunset, false); // Always save as false
     
-    if (enabled) {
-      _startSunsetMonitoring();
-    } else {
-      _sunsetService.stopMonitoring();
-    }
+    // Always stop monitoring since we don't need it in light-only theme
+    _sunsetService.stopMonitoring();
   }
   
-  void toggle() => setAutoSunset(!state);
+  void toggle() {
+    // Auto-sunset is always disabled in light-only theme
+    setAutoSunset(false);
+  }
   
   void _startSunsetMonitoring() {
     _sunsetService.startMonitoring(
@@ -101,11 +88,8 @@ class AutoSunsetNotifier extends StateNotifier<bool> {
         if (state) {
           // Only auto-switch if auto-sunset is still enabled
           final themeNotifier = _ref.read(themeModeProvider.notifier);
-          if (isDark) {
-            themeNotifier.setDark();
-          } else {
-            themeNotifier.setLight();
-          }
+          // Always set to light mode as per light-only theme requirements
+          themeNotifier.setLight();
         }
       },
     );

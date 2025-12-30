@@ -45,6 +45,37 @@ class AuthRepository {
     }
   }
   
+  /// Sign up with email, password, and additional user data
+  Future<UserCredential> signUpWithEmailAndData({
+    required String email,
+    required String password,
+    required String name,
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
+    try {
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      // Update display name
+      await credential.user!.updateDisplayName(name);
+      
+      // Create user document with additional data
+      await _createUserDocumentWithData(
+        user: credential.user!,
+        displayName: name,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+      );
+      
+      return credential;
+    } on FirebaseAuthException {
+      rethrow;
+    }
+  }
+  
   /// Phone authentication - send OTP
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
@@ -164,6 +195,7 @@ class AuthRepository {
         phoneNumber: user.phoneNumber,
         displayName: user.displayName,
         photoUrl: user.photoURL,
+        userStatus: UserStatus.activated, // Default activated
       );
       
       await _firestore
@@ -174,6 +206,39 @@ class AuthRepository {
       // Firestore might not be available - log but don't fail
       developer.log(
         'Failed to create user document in Firestore',
+        name: 'AuthRepository',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+  
+  /// Create user document with additional data
+  Future<void> _createUserDocumentWithData({
+    required User user,
+    String? displayName,
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
+    try {
+      final userModel = UserModel(
+        uid: user.uid,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        displayName: displayName ?? user.displayName,
+        photoUrl: user.photoURL,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+        userStatus: UserStatus.activated, // Default activated
+      );
+      
+      await _firestore
+          .collection(AppConstants.usersCollection)
+          .doc(user.uid)
+          .set(userModel.toFirestore());
+    } catch (e, stackTrace) {
+      developer.log(
+        'Failed to create user document with data in Firestore',
         name: 'AuthRepository',
         error: e,
         stackTrace: stackTrace,
@@ -201,5 +266,123 @@ class AuthRepository {
           );
           return null;
         });
+  }
+  
+  /// Delete user account - deletes all user data from Firestore and Firebase Auth
+  Future<void> deleteUserAccount(String uid) async {
+    try {
+      // Delete all surveys belonging to this user
+      final surveysSnapshot = await _firestore
+          .collection(AppConstants.surveysCollection)
+          .where('user_id', isEqualTo: uid)
+          .get();
+      
+      // Delete surveys in batches
+      final batch = _firestore.batch();
+      for (final doc in surveysSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      
+      // Delete all expenses belonging to this user
+      final expensesSnapshot = await _firestore
+          .collection(AppConstants.expensesCollection)
+          .where('user_id', isEqualTo: uid)
+          .get();
+      
+      // Delete expenses in batches
+      final expenseBatch = _firestore.batch();
+      for (final doc in expensesSnapshot.docs) {
+        expenseBatch.delete(doc.reference);
+      }
+      await expenseBatch.commit();
+      
+      // Delete user document from Firestore
+      await _firestore
+          .collection(AppConstants.usersCollection)
+          .doc(uid)
+          .delete();
+      
+      // Delete the Firebase Auth user
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.delete();
+      }
+      
+      developer.log(
+        'User account deleted successfully',
+        name: 'AuthRepository',
+      );
+    } catch (e, stackTrace) {
+      developer.log(
+        'Failed to delete user account',
+        name: 'AuthRepository',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  /// Update user profile in Firestore and Firebase Auth
+  Future<UserModel?> updateUserProfile({
+    required String uid,
+    String? displayName,
+    String? email,
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
+    try {
+      // Build update map with only provided fields
+      final Map<String, dynamic> updateData = {
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+      
+      if (displayName != null) {
+        updateData['display_name'] = displayName;
+      }
+      if (email != null) {
+        updateData['email'] = email;
+      }
+      if (companyName != null) {
+        updateData['company_name'] = companyName;
+      }
+      if (profileImageBase64 != null) {
+        updateData['profile_image_base64'] = profileImageBase64;
+      }
+      
+      // Update Firestore user document
+      await _firestore
+          .collection(AppConstants.usersCollection)
+          .doc(uid)
+          .update(updateData);
+      
+      // Update Firebase Auth display name if provided
+      final user = _auth.currentUser;
+      if (user != null && displayName != null) {
+        await user.updateDisplayName(displayName);
+      }
+      
+      // Update Firebase Auth email if provided (requires recent authentication)
+      if (user != null && email != null && email != user.email) {
+        await user.verifyBeforeUpdateEmail(email);
+      }
+      
+      developer.log(
+        'User profile updated successfully',
+        name: 'AuthRepository',
+      );
+      
+      // Return updated user data
+      return await getUserData(uid);
+    } catch (e, stackTrace) {
+      developer.log(
+        'Failed to update user profile',
+        name: 'AuthRepository',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 }

@@ -17,6 +17,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -42,24 +43,36 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
     
-    // Use WidgetsBinding to ensure navigation happens after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _navigateToNextScreen();
+    // Start checking auth status after splash animation
+    Future.delayed(const Duration(seconds: 2), () {
+      _checkAuthAndNavigate();
     });
   }
 
-  Future<void> _navigateToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (!mounted) return;
+  void _checkAuthAndNavigate() {
+    if (!mounted || _hasNavigated) return;
     
     final authState = ref.read(authProvider);
     
+    // Check if already authenticated
     if (authState.isAuthenticated) {
-      Navigator.of(context).pushReplacementNamed(AppRoutes.surveyList);
+      _navigateTo(AppRoutes.surveyList);
+    } else if (authState.status == AuthStatus.initial || 
+               authState.status == AuthStatus.loading) {
+      // Auth state is still loading, wait and check again
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _checkAuthAndNavigate();
+      });
     } else {
-      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      // Not authenticated
+      _navigateTo(AppRoutes.login);
     }
+  }
+
+  void _navigateTo(String route) {
+    if (!mounted || _hasNavigated) return;
+    _hasNavigated = true;
+    Navigator.of(context).pushReplacementNamed(route);
   }
 
   @override
@@ -73,18 +86,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final loc = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Listen to auth state changes
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (_hasNavigated) return;
+      
+      // Only navigate after the splash delay
+      if (next.status != AuthStatus.initial && next.status != AuthStatus.loading) {
+        // Add a small delay to ensure splash animation is visible
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (next.isAuthenticated) {
+            _navigateTo(AppRoutes.surveyList);
+          } else if (next.status == AuthStatus.unauthenticated) {
+            _navigateTo(AppRoutes.login);
+          }
+        });
+      }
+    });
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    AppColors.primaryDark,
-                    AppColors.darkBackground,
-                  ]
-                : [
+            colors: [
                     AppColors.primary,
                     AppColors.primaryLight,
                   ],
@@ -101,24 +126,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 120,
+                      SizedBox(
                         height: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.map_outlined,
-                          size: 60,
-                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        width: 120,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(200), // Match the container's radius
+                          child: Image.asset(
+                            "assets/images/playstore.png",
+                            fit: BoxFit.cover, // Ensures the image fills the container
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),

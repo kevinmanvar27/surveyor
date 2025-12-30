@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../core/utils/validators.dart';
 import '../../../data/models/survey_model.dart';
+import '../../../data/models/expense_model.dart';
 import '../../../providers/survey_provider.dart';
+import '../../../providers/expense_provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../expense/widgets/expense_form_dialog.dart';
 
 class SurveyFormScreen extends ConsumerStatefulWidget {
   final String? surveyId;
@@ -167,6 +171,9 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
       }
       
       if (next.isSuccess) {
+        // Reset the form state immediately to prevent re-triggering on next navigation
+        ref.read(surveyFormProvider.notifier).reset();
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_isEditing ? loc.surveyUpdated : loc.surveyCreated),
@@ -196,7 +203,6 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
         slivers: [
           // Stunning App Bar with Gradient
           SliverAppBar(
-            expandedHeight: 120,
             floating: false,
             pinned: true,
             elevation: 0,
@@ -253,7 +259,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
   }
 
   Widget _buildLoadingState() {
-    return Container(
+    return SizedBox(
       height: 400,
       child: const Center(
         child: Column(
@@ -280,17 +286,12 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
 
   Widget _buildFormContent(BuildContext context, AppLocalizations loc, SurveyFormState formState) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Card
-            _buildHeaderCard(),
-            
-            const SizedBox(height: 24),
-            
             // Personal Information Section
             _buildSectionCard(
               title: 'Personal Information',
@@ -307,7 +308,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                   ),
                 ),
                 
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
                 
                 _buildStunningTextField(
                   controller: _mobileController,
@@ -325,49 +326,56 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
               ],
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             
             // Survey Details Section
             _buildSectionCard(
               title: 'Survey Details',
               icon: Icons.location_on_outlined,
               children: [
-                _buildStunningTextField(
-                  controller: _villageController,
-                  label: 'Village Name',
-                  hint: 'Enter village name',
-                  icon: Icons.location_city_outlined,
-                  validator: (value) => Validators.validateVillageName(
-                    value,
-                    emptyMessage: 'Village name is required',
-                  ),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                _buildStunningTextField(
-                  controller: _surveyNumberController,
-                  label: 'Survey Number',
-                  hint: 'Enter survey number',
-                  icon: Icons.numbers_outlined,
-                  validator: (value) => Validators.validateSurveyNumber(
-                    value,
-                    emptyMessage: 'Survey number is required',
-                  ),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                _buildStunningDateField(),
-                
-                const SizedBox(height: 20),
-                
+                // Village and Survey Number in a row
                 Row(
                   children: [
                     Expanded(
-                      flex: 1,
+                      child: _buildStunningTextField(
+                        controller: _villageController,
+                        label: 'Village',
+                        hint: 'Village name',
+                        icon: Icons.location_city_outlined,
+                        validator: (value) => Validators.validateVillageName(
+                          value,
+                          emptyMessage: 'Required',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildStunningTextField(
+                        controller: _surveyNumberController,
+                        label: 'Survey No.',
+                        hint: 'Number',
+                        icon: Icons.numbers_outlined,
+                        validator: (value) => Validators.validateSurveyNumber(
+                          value,
+                          emptyMessage: 'Required',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                _buildStunningDateField(),
+                
+                const SizedBox(height: 12),
+                
+                // Survey Type and Status in a row
+                Row(
+                  children: [
+                    Expanded(
                       child: _buildStunningDropdown<SurveyType>(
-                        label: 'Survey Type',
+                        label: 'Type',
                         value: _surveyType,
                         items: SurveyType.values,
                         onChanged: (value) {
@@ -381,11 +389,8 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                         icon: Icons.business_outlined,
                       ),
                     ),
-                    
-                    const SizedBox(width: 16),
-                    
+                    const SizedBox(width: 12),
                     Expanded(
-                      flex: 1,
                       child: _buildStunningDropdown<SurveyStatus>(
                         label: 'Status',
                         value: _status,
@@ -406,72 +411,25 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
               ],
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             
             // Payment Section
             _buildPaymentSection(),
             
-            const SizedBox(height: 32),
+            // Expenses Section (only show when editing existing survey)
+            if (_isEditing && widget.surveyId != null) ...[
+              const SizedBox(height: 16),
+              _buildExpensesSection(loc),
+            ],
+            
+            const SizedBox(height: 20),
             
             // Save Button
             _buildStunningSaveButton(formState),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: AppColors.surfaceGradient,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              _isEditing ? Icons.edit_document : Icons.add_task,
-              color: Colors.white,
-              size: 32,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _isEditing ? 'Update Survey Details' : 'Create New Survey',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _isEditing 
-                ? 'Modify the survey information below'
-                : 'Fill in the details to create a new survey',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }
@@ -482,7 +440,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
     required List<Widget> children,
   }) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16), // Reduced from 24
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark 
             ? AppColors.darkSurface 
@@ -510,29 +468,29 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8), // Reduced from 12
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12), // Reduced from 16
                 ),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
+                  size: 18, // Reduced from 20
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12), // Reduced from 16
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16, // Reduced from 18
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16), // Reduced from 24
           ...children,
         ],
       ),
@@ -568,16 +526,16 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
           labelText: label,
           hintText: hint,
           prefixIcon: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8), // Reduced from 12
+            padding: const EdgeInsets.all(6), // Reduced from 8
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10), // Reduced from 12
             ),
             child: Icon(
               icon,
               color: Colors.white,
-              size: 20,
+              size: 16, // Reduced from 20
             ),
           ),
           filled: true,
@@ -623,13 +581,13 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
             color: AppColors.textSecondary.withOpacity(0.7),
             fontSize: 14,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Reduced
           counterText: '',
         ),
         validator: validator,
         onChanged: onChanged,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 15, // Reduced from 16
           fontWeight: FontWeight.w500,
           color: AppColors.textPrimary,
         ),
@@ -675,7 +633,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -687,16 +645,16 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
           child: Row(
             children: [
               Container(
-                margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(right: 10), // Reduced from 12
+                padding: const EdgeInsets.all(6), // Reduced from 8
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10), // Reduced from 12
                 ),
                 child: const Icon(
                   Icons.calendar_today_outlined,
                   color: Colors.white,
-                  size: 20,
+                  size: 16, // Reduced from 20
                 ),
               ),
               Expanded(
@@ -707,17 +665,17 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                       'Survey Date',
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 14,
+                        fontSize: 12, // Reduced from 14
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2), // Reduced from 4
                     Text(
                       _surveyDate != null
                           ? '${_surveyDate!.day}/${_surveyDate!.month}/${_surveyDate!.year}'
-                          : 'Select survey date',
+                          : 'Select date',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14, // Reduced from 16
                         fontWeight: FontWeight.w500,
                         color: _surveyDate != null 
                             ? AppColors.textPrimary 
@@ -759,21 +717,21 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
         ],
       ),
       child: DropdownButtonFormField<T>(
-        value: value,
+        initialValue: value,
         isExpanded: true,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8), // Reduced from 12
+            padding: const EdgeInsets.all(6), // Reduced from 8
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10), // Reduced from 12
             ),
             child: Icon(
               icon,
               color: Colors.white,
-              size: 20,
+              size: 16, // Reduced from 20
             ),
           ),
           filled: true,
@@ -798,10 +756,10 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
           ),
           labelStyle: const TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 14,
+            fontSize: 12, // Reduced from 14
             fontWeight: FontWeight.w500,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced
         ),
         items: items.map((item) {
           return DropdownMenuItem<T>(
@@ -809,7 +767,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
             child: Text(
               itemLabel(item),
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14, // Reduced from 16
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,
               ),
@@ -820,7 +778,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
         onChanged: onChanged,
         dropdownColor: Colors.white,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 14, // Reduced from 16
           fontWeight: FontWeight.w500,
           color: AppColors.textPrimary,
         ),
@@ -833,45 +791,52 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
       title: 'Payment Details',
       icon: Icons.payments_outlined,
       children: [
-        _buildStunningTextField(
-          controller: _totalPaymentController,
-          label: 'Total Payment',
-          hint: 'Enter total amount',
-          icon: Icons.currency_rupee,
-          keyboardType: TextInputType.number,
-          onChanged: (_) => setState(() {}),
-          validator: (value) => Validators.validateAmount(
-            value,
-            emptyMessage: 'Total payment is required',
-          ),
+        // Total and Received Payment in a row
+        Row(
+          children: [
+            Expanded(
+              child: _buildStunningTextField(
+                controller: _totalPaymentController,
+                label: 'Total',
+                hint: 'Amount',
+                icon: Icons.currency_rupee,
+                keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
+                validator: (value) => Validators.validateAmount(
+                  value,
+                  emptyMessage: 'Required',
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildStunningTextField(
+                controller: _receivedPaymentController,
+                label: 'Received',
+                hint: 'Amount',
+                icon: Icons.account_balance_wallet_outlined,
+                keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
+                validator: (value) {
+                  final amountError = Validators.validateAmount(value, allowZero: true);
+                  if (amountError != null) return amountError;
+                  
+                  return Validators.validateReceivedPayment(
+                    value,
+                    _totalPaymentController.text,
+                    exceedsMessage: 'Exceeds total',
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         
-        const SizedBox(height: 20),
+        const SizedBox(height: 12), // Reduced from 24
         
-        _buildStunningTextField(
-          controller: _receivedPaymentController,
-          label: 'Received Payment',
-          hint: 'Enter received amount',
-          icon: Icons.account_balance_wallet_outlined,
-          keyboardType: TextInputType.number,
-          onChanged: (_) => setState(() {}),
-          validator: (value) {
-            final amountError = Validators.validateAmount(value, allowZero: true);
-            if (amountError != null) return amountError;
-            
-            return Validators.validateReceivedPayment(
-              value,
-              _totalPaymentController.text,
-              exceedsMessage: 'Received amount cannot exceed total',
-            );
-          },
-        ),
-        
-        const SizedBox(height: 24),
-        
-        // Pending Payment Display
+        // Compact Pending Payment Display
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced
           decoration: BoxDecoration(
             gradient: _pendingPayment > 0
                 ? LinearGradient(
@@ -886,7 +851,7 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                       AppColors.cardSuccess.withOpacity(0.7),
                     ],
                   ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16), // Reduced from 20
             border: Border.all(
               color: _pendingPayment > 0
                   ? AppColors.error.withOpacity(0.2)
@@ -897,35 +862,34 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8), // Reduced from 12
                 decoration: BoxDecoration(
                   color: _pendingPayment > 0 ? AppColors.error : AppColors.success,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12), // Reduced from 16
                 ),
                 child: Icon(
                   _pendingPayment > 0 ? Icons.pending_actions : Icons.check_circle,
                   color: Colors.white,
-                  size: 24,
+                  size: 18, // Reduced from 24
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12), // Reduced from 16
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Pending Payment',
+                      'Pending:',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
-                      '₹${_pendingPayment.toStringAsFixed(2)}',
+                      '₹${_pendingPayment.toStringAsFixed(0)}',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 18, // Reduced from 24
                         fontWeight: FontWeight.w700,
                         color: _pendingPayment > 0 ? AppColors.error : AppColors.success,
                       ),
@@ -933,17 +897,18 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                   ],
                 ),
               ),
+              const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Reduced
                 decoration: BoxDecoration(
                   color: _pendingPayment > 0 ? AppColors.error : AppColors.success,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10), // Reduced from 12
                 ),
                 child: Text(
                   _pendingPayment > 0 ? 'PENDING' : 'PAID',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 11, // Reduced from 12
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -959,12 +924,12 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
     return Container(
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16), // Reduced from 20
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 12, // Reduced from 20
+            offset: const Offset(0, 4), // Reduced from 8
           ),
         ],
       ),
@@ -973,15 +938,15 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 14), // Reduced from 20
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16), // Reduced from 20
           ),
         ),
         child: formState.isLoading
             ? const SizedBox(
-                height: 24,
-                width: 24,
+                height: 20, // Reduced from 24
+                width: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -993,13 +958,13 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
                   Icon(
                     _isEditing ? Icons.update : Icons.save,
                     color: Colors.white,
-                    size: 24,
+                    size: 20, // Reduced from 24
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8), // Reduced from 12
                   Text(
                     _isEditing ? 'Update Survey' : 'Create Survey',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16, // Reduced from 18
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: 0.5,
@@ -1009,5 +974,262 @@ class _SurveyFormScreenState extends ConsumerState<SurveyFormScreen>
               ),
       ),
     );
+  }
+
+  Widget _buildExpensesSection(AppLocalizations loc) {
+    final expensesAsync = ref.watch(expensesBySurveyProvider(widget.surveyId!));
+    
+    return _buildSectionCard(
+      title: loc.surveyExpensesSection,
+      icon: Icons.receipt_long_outlined,
+      children: [
+        expensesAsync.when(
+          data: (expenses) {
+            if (expenses.isEmpty) {
+              return Column(
+                children: [
+                  // Empty state
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.border.withOpacity(0.2),
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.receipt_long_outlined,
+                          size: 48,
+                          color: AppColors.textSecondary.withOpacity(0.5),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          loc.noExpensesForSurvey,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          loc.tapToAddExpense,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildAddExpenseButton(loc),
+                ],
+              );
+            }
+            
+            // Calculate total
+            final total = expenses.fold<double>(0, (sum, e) => sum + e.amount);
+            
+            return Column(
+              children: [
+                // Expenses list
+                ...expenses.map((expense) => _buildExpenseItem(expense, loc)),
+                
+                const SizedBox(height: 12),
+                
+                // Total row
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        loc.totalExpenses,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        '₹${total.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 12),
+                _buildAddExpenseButton(loc),
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          error: (error, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Error loading expenses',
+                style: TextStyle(color: AppColors.error),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpenseItem(ExpenseModel expense, AppLocalizations loc) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.border.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Category icon
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _getCategoryColor(expense.category).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              _getCategoryIcon(expense.category),
+              color: _getCategoryColor(expense.category),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Description and date
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  expense.description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  DateFormat('dd MMM yyyy').format(expense.date),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Amount
+          Text(
+            '₹${expense.amount.toStringAsFixed(0)}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddExpenseButton(AppLocalizations loc) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _showAddExpenseDialog,
+        icon: const Icon(Icons.add, size: 20),
+        label: Text(loc.addExpenseToSurvey),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: BorderSide(color: AppColors.primary.withOpacity(0.5)),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddExpenseDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ExpenseFormDialog(surveyId: widget.surveyId),
+    ).then((_) {
+      // Refresh the expenses list
+      ref.invalidate(expensesBySurveyProvider(widget.surveyId!));
+    });
+  }
+
+  Color _getCategoryColor(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.travel:
+        return Colors.blue;
+      case ExpenseCategory.equipment:
+        return Colors.orange;
+      case ExpenseCategory.food:
+        return Colors.green;
+      case ExpenseCategory.fuel:
+        return Colors.red;
+      case ExpenseCategory.accommodation:
+        return Colors.purple;
+      case ExpenseCategory.communication:
+        return Colors.teal;
+      case ExpenseCategory.other:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getCategoryIcon(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.travel:
+        return Icons.directions_car;
+      case ExpenseCategory.equipment:
+        return Icons.build;
+      case ExpenseCategory.food:
+        return Icons.restaurant;
+      case ExpenseCategory.fuel:
+        return Icons.local_gas_station;
+      case ExpenseCategory.accommodation:
+        return Icons.hotel;
+      case ExpenseCategory.communication:
+        return Icons.phone;
+      case ExpenseCategory.other:
+        return Icons.more_horiz;
+    }
   }
 }

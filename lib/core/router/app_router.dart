@@ -10,6 +10,8 @@ import '../../features/survey/screens/survey_form_screen.dart';
 import '../../features/survey/screens/survey_detail_screen.dart';
 import '../../features/invoice/screens/invoice_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/settings/screens/edit_profile_screen.dart';
+import '../../features/expense/screens/expense_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -23,6 +25,8 @@ class AppRoutes {
   static const String surveyDetail = '/survey-detail';
   static const String invoice = '/invoice';
   static const String settings = '/settings';
+  static const String editProfile = '/settings/edit-profile';
+  static const String expenses = '/expenses';
 }
 
 class AppRouter {
@@ -93,6 +97,16 @@ class AppRouter {
       case AppRoutes.settings:
         return MaterialPageRoute(
           builder: (_) => const SettingsScreen(),
+        );
+        
+      case AppRoutes.editProfile:
+        return MaterialPageRoute(
+          builder: (_) => const EditProfileScreen(),
+        );
+        
+      case AppRoutes.expenses:
+        return MaterialPageRoute(
+          builder: (_) => const ExpenseScreen(),
         );
         
       default:

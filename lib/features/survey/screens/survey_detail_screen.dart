@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
@@ -6,8 +7,11 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/config/app_config.dart';
 import '../../../data/models/survey_model.dart';
+import '../../../data/models/expense_model.dart';
 import '../../../data/repositories/survey_repository.dart';
 import '../../../providers/survey_provider.dart';
+import '../../../providers/expense_provider.dart';
+import '../../expense/widgets/expense_form_dialog.dart';
 
 class SurveyDetailScreen extends ConsumerStatefulWidget {
   final String surveyId;
@@ -298,6 +302,11 @@ class _SurveyDetailScreenState extends ConsumerState<SurveyDetailScreen> {
             
             const SizedBox(height: 16),
             
+            // Linked Expenses Section
+            // _buildLinkedExpensesSection(loc, isDark),
+            //
+            // const SizedBox(height: 16),
+            
             // Invoice Status Card
             if (_survey!.invoiceUrl != null)
               _buildInvoiceCard(loc, isDark),
@@ -578,6 +587,214 @@ class _SurveyDetailScreenState extends ConsumerState<SurveyDetailScreen> {
     );
   }
 
+  Widget _buildLinkedExpensesSection(AppLocalizations loc, bool isDark) {
+    final surveyId = _survey?.id;
+    if (surveyId == null) return const SizedBox.shrink();
+    
+    return Consumer(
+      builder: (context, ref, child) {
+        final expensesAsync = ref.watch(expensesBySurveyProvider(surveyId));
+        
+        return expensesAsync.when(
+          loading: () => Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: isDark ? AppColors.darkDivider : AppColors.divider),
+            ),
+            color: isDark ? AppColors.darkSurface : AppColors.surface,
+            child: const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+          error: (error, stack) => const SizedBox.shrink(),
+          data: (expenses) {
+            return Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: isDark ? AppColors.darkDivider : AppColors.divider),
+              ),
+              color: isDark ? AppColors.darkSurface : AppColors.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with title and add button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.receipt_outlined,
+                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              loc.surveyExpenses,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        // Add Expense button removed - survey detail is read-only view
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    if (expenses.isEmpty)
+                      // Empty state
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.receipt_long_outlined,
+                                size: 48,
+                                color: isDark ? AppColors.darkTextSecondary.withValues(alpha: 0.5) : AppColors.textSecondary.withValues(alpha: 0.5),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                loc.noLinkedExpenses,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      // Expenses list
+                      Column(
+                        children: [
+                          ...expenses.map((expense) => _buildExpenseItem(expense, isDark)),
+                          const SizedBox(height: 8),
+                          // Total
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  loc.totalExpenses,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                Text(
+                                  '₹${expenses.fold<double>(0, (sum, e) => sum + e.amount).toStringAsFixed(2)}',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildExpenseItem(ExpenseModel expense, bool isDark) {
+    final categoryColor = _getCategoryColor(expense.category);
+    final categoryIcon = _getCategoryIcon(expense.category);
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkBackground : AppColors.background,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? AppColors.darkDivider : AppColors.divider,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Category icon
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: categoryColor.withValues(alpha: isDark ? 0.2 : 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              categoryIcon,
+              color: categoryColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Description and date
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  expense.description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${expense.category.displayName} • ${_formatDate(expense.date)}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          // Amount
+          Text(
+            '₹${expense.amount.toStringAsFixed(2)}',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddExpenseDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ExpenseFormDialog(
+        surveyId: _survey?.id,
+      ),
+    ).then((_) {
+      // Refresh the expenses list after adding
+      if (mounted) {
+        ref.invalidate(expensesBySurveyProvider(_survey!.id!));
+      }
+    });
+  }
+
   Widget _buildInvoiceCard(AppLocalizations loc, bool isDark) {
     return Card(
       elevation: 0,
@@ -630,6 +847,44 @@ class _SurveyDetailScreenState extends ConsumerState<SurveyDetailScreen> {
         ),
       ),
     );
+  }
+
+  Color _getCategoryColor(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.travel:
+        return Colors.blue;
+      case ExpenseCategory.equipment:
+        return Colors.orange;
+      case ExpenseCategory.food:
+        return Colors.green;
+      case ExpenseCategory.fuel:
+        return Colors.red;
+      case ExpenseCategory.accommodation:
+        return Colors.purple;
+      case ExpenseCategory.communication:
+        return Colors.teal;
+      case ExpenseCategory.other:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getCategoryIcon(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.travel:
+        return Icons.directions_car;
+      case ExpenseCategory.equipment:
+        return Icons.build;
+      case ExpenseCategory.food:
+        return Icons.restaurant;
+      case ExpenseCategory.fuel:
+        return Icons.local_gas_station;
+      case ExpenseCategory.accommodation:
+        return Icons.hotel;
+      case ExpenseCategory.communication:
+        return Icons.phone;
+      case ExpenseCategory.other:
+        return Icons.more_horiz;
+    }
   }
 
   String _formatDate(DateTime date) {

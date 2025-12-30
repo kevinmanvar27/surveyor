@@ -543,3 +543,21 @@ final totalPendingPaymentProvider = FutureProvider<double>((ref) async {
   final userId = authState.userModel?.uid ?? authState.user?.uid ?? '';
   return repository.getTotalPendingPayment(userId);
 });
+
+/// Provider to get waiting surveys for expense linking
+final waitingSurveysProvider = FutureProvider<List<SurveyModel>>((ref) async {
+  if (AppConfig.useDemoMode) {
+    return DemoSurveyData.getSurveys(statusFilter: 'Waiting');
+  }
+  final repository = ref.watch(surveyRepositoryProvider);
+  if (repository == null) {
+    return DemoSurveyData.getSurveys(statusFilter: 'Waiting');
+  }
+  final authState = ref.watch(authProvider);
+  final userId = authState.userModel?.uid ?? authState.user?.uid ?? '';
+  return repository.getSurveys(
+    userId: userId,
+    statusFilter: 'Waiting',
+    sortOption: SurveySortOption.dateDesc,
+  );
+});

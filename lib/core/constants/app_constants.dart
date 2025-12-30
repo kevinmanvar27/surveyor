@@ -9,9 +9,13 @@ class AppConstants {
   static const String companyPhone = '+91 9876543210';
   static const String companyEmail = 'contact@surveysolutions.com';
   
+  // Support & Legal
+  static const String supportEmail = 'rektech.uk@gmail.com';
+  
   // Firestore Collections
   static const String surveysCollection = 'surveys';
   static const String usersCollection = 'users';
+  static const String expensesCollection = 'expenses';
   
   // Storage Paths
   static const String invoicesPath = 'invoices';

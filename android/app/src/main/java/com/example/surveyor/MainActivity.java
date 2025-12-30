@@ -1,4 +1,4 @@
-package com.example.surveyor;
+package com.rektech.surveyor;
 
 import io.flutter.embedding.android.FlutterActivity;
 

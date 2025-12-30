@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../constants/app_strings.dart';
 
 class AppLocalizations {
@@ -57,6 +58,8 @@ class AppLocalizations {
   String get copy => _getString(AppStringsEn.copy, AppStringsHi.copy, AppStringsGu.copy);
   String get share => _getString(AppStringsEn.share, AppStringsHi.share, AppStringsGu.share);
   String get print => _getString(AppStringsEn.print, AppStringsHi.print, AppStringsGu.print);
+  String get camera => _getString(AppStringsEn.camera, AppStringsHi.camera, AppStringsGu.camera);
+  String get gallery => _getString(AppStringsEn.gallery, AppStringsHi.gallery, AppStringsGu.gallery);
   
   // ==================== Auth ====================
   String get login => _getString(AppStringsEn.login, AppStringsHi.login, AppStringsGu.login);
@@ -125,6 +128,7 @@ class AppLocalizations {
   String get addFirstSurvey => _getString(AppStringsEn.addFirstSurvey, AppStringsHi.addFirstSurvey, AppStringsGu.addFirstSurvey);
   String get total => _getString(AppStringsEn.total, AppStringsHi.total, AppStringsGu.total);
   String get pending => _getString(AppStringsEn.pending, AppStringsHi.pending, AppStringsGu.pending);
+  String get noSelection => _getString(AppStringsEn.noSelection, AppStringsHi.noSelection, AppStringsGu.noSelection);
   String get offlineMode => _getString('Offline Mode', 'ऑफ़लाइन मोड', 'ઓફલાઇન મોડ');
   
   // ==================== Survey ====================
@@ -249,6 +253,118 @@ class AppLocalizations {
   String get notifications => _getString(AppStringsEn.notifications, AppStringsHi.notifications, AppStringsGu.notifications);
   String get general => _getString(AppStringsEn.general, AppStringsHi.general, AppStringsGu.general);
   String get appearance => _getString(AppStringsEn.appearance, AppStringsHi.appearance, AppStringsGu.appearance);
+  
+  // ==================== Support & Help ====================
+  String get privacyPolicyContent => _getString(AppStringsEn.privacyPolicyContent, AppStringsHi.privacyPolicyContent, AppStringsGu.privacyPolicyContent);
+  String get contactUsMessage => _getString(AppStringsEn.contactUsMessage, AppStringsHi.contactUsMessage, AppStringsGu.contactUsMessage);
+  String get emailCopied => _getString(AppStringsEn.emailCopied, AppStringsHi.emailCopied, AppStringsGu.emailCopied);
+  String get copyEmail => _getString(AppStringsEn.copyEmail, AppStringsHi.copyEmail, AppStringsGu.copyEmail);
+  
+  // ==================== Delete Account ====================
+  String get deleteAccount => _getString(AppStringsEn.deleteAccount, AppStringsHi.deleteAccount, AppStringsGu.deleteAccount);
+  String get deleteAccountWarning => _getString(AppStringsEn.deleteAccountWarning, AppStringsHi.deleteAccountWarning, AppStringsGu.deleteAccountWarning);
+  String get deleteAccountConfirmation => _getString(AppStringsEn.deleteAccountConfirmation, AppStringsHi.deleteAccountConfirmation, AppStringsGu.deleteAccountConfirmation);
+  String get deleteAccountError => _getString(AppStringsEn.deleteAccountError, AppStringsHi.deleteAccountError, AppStringsGu.deleteAccountError);
+  String get accountDeletedSuccess => _getString(AppStringsEn.accountDeletedSuccess, AppStringsHi.accountDeletedSuccess, AppStringsGu.accountDeletedSuccess);
+  
+  // ==================== Edit Profile ====================
+  String get editProfile => _getString(AppStringsEn.editProfile, AppStringsHi.editProfile, AppStringsGu.editProfile);
+  String get editProfileSubtitle => _getString(AppStringsEn.editProfileSubtitle, AppStringsHi.editProfileSubtitle, AppStringsGu.editProfileSubtitle);
+  String get enterYourName => _getString(AppStringsEn.enterYourName, AppStringsHi.enterYourName, AppStringsGu.enterYourName);
+  String get enterYourEmail => _getString(AppStringsEn.enterYourEmail, AppStringsHi.enterYourEmail, AppStringsGu.enterYourEmail);
+  String get companyName => _getString(AppStringsEn.companyName, AppStringsHi.companyName, AppStringsGu.companyName);
+  String get enterCompanyName => _getString(AppStringsEn.enterCompanyName, AppStringsHi.enterCompanyName, AppStringsGu.enterCompanyName);
+  String get companyNameRequired => _getString(AppStringsEn.companyNameRequired, AppStringsHi.companyNameRequired, AppStringsGu.companyNameRequired);
+  String get profileImage => _getString(AppStringsEn.profileImage, AppStringsHi.profileImage, AppStringsGu.profileImage);
+  String get selectProfileImage => _getString(AppStringsEn.selectProfileImage, AppStringsHi.selectProfileImage, AppStringsGu.selectProfileImage);
+  String get changeProfileImage => _getString(AppStringsEn.changeProfileImage, AppStringsHi.changeProfileImage, AppStringsGu.changeProfileImage);
+  String get removeProfileImage => _getString(AppStringsEn.removeProfileImage, AppStringsHi.removeProfileImage, AppStringsGu.removeProfileImage);
+  String get takeNewPhoto => _getString(AppStringsEn.takeNewPhoto, AppStringsHi.takeNewPhoto, AppStringsGu.takeNewPhoto);
+  String get selectExistingPhoto => _getString(AppStringsEn.selectExistingPhoto, AppStringsHi.selectExistingPhoto, AppStringsGu.selectExistingPhoto);
+  String get tapToAddProfilePhoto => _getString(AppStringsEn.tapToAddProfilePhoto, AppStringsHi.tapToAddProfilePhoto, AppStringsGu.tapToAddProfilePhoto);
+  String get tapToEditPhoto => _getString(AppStringsEn.tapToEditPhoto, AppStringsHi.tapToEditPhoto, AppStringsGu.tapToEditPhoto);
+  String get cropProfileImage => _getString(AppStringsEn.cropProfileImage, AppStringsHi.cropProfileImage, AppStringsGu.cropProfileImage);
+  String get imageCompressedTo => _getString(AppStringsEn.imageCompressedTo, AppStringsHi.imageCompressedTo, AppStringsGu.imageCompressedTo);
+  String get failedToProcessImage => _getString(AppStringsEn.failedToProcessImage, AppStringsHi.failedToProcessImage, AppStringsGu.failedToProcessImage);
+  String get profileUpdatedSuccess => _getString(AppStringsEn.profileUpdatedSuccess, AppStringsHi.profileUpdatedSuccess, AppStringsGu.profileUpdatedSuccess);
+  String get profileUpdateFailed => _getString(AppStringsEn.profileUpdateFailed, AppStringsHi.profileUpdateFailed, AppStringsGu.profileUpdateFailed);
+  String get saveChanges => _getString(AppStringsEn.saveChanges, AppStringsHi.saveChanges, AppStringsGu.saveChanges);
+  String get discardChanges => _getString(AppStringsEn.discardChanges, AppStringsHi.discardChanges, AppStringsGu.discardChanges);
+  String get unsavedChanges => _getString(AppStringsEn.unsavedChanges, AppStringsHi.unsavedChanges, AppStringsGu.unsavedChanges);
+  String get unsavedChangesMessage => _getString(AppStringsEn.unsavedChangesMessage, AppStringsHi.unsavedChangesMessage, AppStringsGu.unsavedChangesMessage);
+  
+  // ==================== Expenses ====================
+  String get expenses => _getString(AppStringsEn.expenses, AppStringsHi.expenses, AppStringsGu.expenses);
+  String get expenseTracking => _getString(AppStringsEn.expenseTracking, AppStringsHi.expenseTracking, AppStringsGu.expenseTracking);
+  String get expenseTrackingSubtitle => _getString(AppStringsEn.expenseTrackingSubtitle, AppStringsHi.expenseTrackingSubtitle, AppStringsGu.expenseTrackingSubtitle);
+  String get addExpense => _getString(AppStringsEn.addExpense, AppStringsHi.addExpense, AppStringsGu.addExpense);
+  String get editExpense => _getString(AppStringsEn.editExpense, AppStringsHi.editExpense, AppStringsGu.editExpense);
+  String get deleteExpense => _getString(AppStringsEn.deleteExpense, AppStringsHi.deleteExpense, AppStringsGu.deleteExpense);
+  String get expenseDescription => _getString(AppStringsEn.expenseDescription, AppStringsHi.expenseDescription, AppStringsGu.expenseDescription);
+  String get enterExpenseDescription => _getString(AppStringsEn.enterExpenseDescription, AppStringsHi.enterExpenseDescription, AppStringsGu.enterExpenseDescription);
+  String get expenseAmount => _getString(AppStringsEn.expenseAmount, AppStringsHi.expenseAmount, AppStringsGu.expenseAmount);
+  String get enterExpenseAmount => _getString(AppStringsEn.enterExpenseAmount, AppStringsHi.enterExpenseAmount, AppStringsGu.enterExpenseAmount);
+  String get expenseCategory => _getString(AppStringsEn.expenseCategory, AppStringsHi.expenseCategory, AppStringsGu.expenseCategory);
+  String get selectCategory => _getString(AppStringsEn.selectCategory, AppStringsHi.selectCategory, AppStringsGu.selectCategory);
+  String get expenseDate => _getString(AppStringsEn.expenseDate, AppStringsHi.expenseDate, AppStringsGu.expenseDate);
+  String get selectDate => _getString(AppStringsEn.selectDate, AppStringsHi.selectDate, AppStringsGu.selectDate);
+  String get dailyExpenses => _getString(AppStringsEn.dailyExpenses, AppStringsHi.dailyExpenses, AppStringsGu.dailyExpenses);
+  String get weeklyExpenses => _getString(AppStringsEn.weeklyExpenses, AppStringsHi.weeklyExpenses, AppStringsGu.weeklyExpenses);
+  String get monthlyExpenses => _getString(AppStringsEn.monthlyExpenses, AppStringsHi.monthlyExpenses, AppStringsGu.monthlyExpenses);
+  String get yearlyExpenses => _getString(AppStringsEn.yearlyExpenses, AppStringsHi.yearlyExpenses, AppStringsGu.yearlyExpenses);
+  String get allExpenses => _getString(AppStringsEn.allExpenses, AppStringsHi.allExpenses, AppStringsGu.allExpenses);
+  String get totalExpenses => _getString(AppStringsEn.totalExpenses, AppStringsHi.totalExpenses, AppStringsGu.totalExpenses);
+  String get noExpenses => _getString(AppStringsEn.noExpenses, AppStringsHi.noExpenses, AppStringsGu.noExpenses);
+  String get noExpensesDescription => _getString(AppStringsEn.noExpensesDescription, AppStringsHi.noExpensesDescription, AppStringsGu.noExpensesDescription);
+  String get expenseAdded => _getString(AppStringsEn.expenseAdded, AppStringsHi.expenseAdded, AppStringsGu.expenseAdded);
+  String get expenseUpdated => _getString(AppStringsEn.expenseUpdated, AppStringsHi.expenseUpdated, AppStringsGu.expenseUpdated);
+  String get expenseDeleted => _getString(AppStringsEn.expenseDeleted, AppStringsHi.expenseDeleted, AppStringsGu.expenseDeleted);
+  String get deleteExpenseConfirmation => _getString(AppStringsEn.deleteExpenseConfirmation, AppStringsHi.deleteExpenseConfirmation, AppStringsGu.deleteExpenseConfirmation);
+  String get expenseDescriptionRequired => _getString(AppStringsEn.expenseDescriptionRequired, AppStringsHi.expenseDescriptionRequired, AppStringsGu.expenseDescriptionRequired);
+  String get expenseAmountRequired => _getString(AppStringsEn.expenseAmountRequired, AppStringsHi.expenseAmountRequired, AppStringsGu.expenseAmountRequired);
+  String get invalidExpenseAmount => _getString(AppStringsEn.invalidExpenseAmount, AppStringsHi.invalidExpenseAmount, AppStringsGu.invalidExpenseAmount);
+  
+  // ==================== Expense Categories ====================
+  String get categoryTravel => _getString(AppStringsEn.categoryTravel, AppStringsHi.categoryTravel, AppStringsGu.categoryTravel);
+  String get categoryEquipment => _getString(AppStringsEn.categoryEquipment, AppStringsHi.categoryEquipment, AppStringsGu.categoryEquipment);
+  String get categoryFood => _getString(AppStringsEn.categoryFood, AppStringsHi.categoryFood, AppStringsGu.categoryFood);
+  String get categoryFuel => _getString(AppStringsEn.categoryFuel, AppStringsHi.categoryFuel, AppStringsGu.categoryFuel);
+  String get categoryAccommodation => _getString(AppStringsEn.categoryAccommodation, AppStringsHi.categoryAccommodation, AppStringsGu.categoryAccommodation);
+  String get categoryCommunication => _getString(AppStringsEn.categoryCommunication, AppStringsHi.categoryCommunication, AppStringsGu.categoryCommunication);
+  String get categoryOther => _getString(AppStringsEn.categoryOther, AppStringsHi.categoryOther, AppStringsGu.categoryOther);
+  
+  // ==================== Expense Summary ====================
+  String get expenseSummary => _getString(AppStringsEn.expenseSummary, AppStringsHi.expenseSummary, AppStringsGu.expenseSummary);
+  String get byCategory => _getString(AppStringsEn.byCategory, AppStringsHi.byCategory, AppStringsGu.byCategory);
+  String get recentExpenses => _getString(AppStringsEn.recentExpenses, AppStringsHi.recentExpenses, AppStringsGu.recentExpenses);
+  String get viewAll => _getString(AppStringsEn.viewAll, AppStringsHi.viewAll, AppStringsGu.viewAll);
+  String get items => _getString(AppStringsEn.items, AppStringsHi.items, AppStringsGu.items);
+
+  // ==================== Survey-Expense Linking ====================
+  String get selectSurvey => _getString(AppStringsEn.selectSurvey, AppStringsHi.selectSurvey, AppStringsGu.selectSurvey);
+  String get linkToSurvey => _getString(AppStringsEn.linkToSurvey, AppStringsHi.linkToSurvey, AppStringsGu.linkToSurvey);
+  String get noWaitingSurveys => _getString(AppStringsEn.noWaitingSurveys, AppStringsHi.noWaitingSurveys, AppStringsGu.noWaitingSurveys);
+  String get surveyExpenses => _getString(AppStringsEn.surveyExpenses, AppStringsHi.surveyExpenses, AppStringsGu.surveyExpenses);
+  String get addExpenseForSurvey => _getString(AppStringsEn.addExpenseForSurvey, AppStringsHi.addExpenseForSurvey, AppStringsGu.addExpenseForSurvey);
+  String get linkedToSurvey => _getString(AppStringsEn.linkedToSurvey, AppStringsHi.linkedToSurvey, AppStringsGu.linkedToSurvey);
+  String get noLinkedExpenses => _getString(AppStringsEn.noLinkedExpenses, AppStringsHi.noLinkedExpenses, AppStringsGu.noLinkedExpenses);
+  String get optional => _getString(AppStringsEn.optional, AppStringsHi.optional, AppStringsGu.optional);
+
+  // ==================== Image Crop Confirmation ====================
+  String get cropImage => _getString(AppStringsEn.cropImage, AppStringsHi.cropImage, AppStringsGu.cropImage);
+  String get cropImageConfirmation => _getString(AppStringsEn.cropImageConfirmation, AppStringsHi.cropImageConfirmation, AppStringsGu.cropImageConfirmation);
+  String get cropImageYes => _getString(AppStringsEn.cropImageYes, AppStringsHi.cropImageYes, AppStringsGu.cropImageYes);
+  String get cropImageNo => _getString(AppStringsEn.cropImageNo, AppStringsHi.cropImageNo, AppStringsGu.cropImageNo);
+
+  // ==================== Survey Form - Expenses Section ====================
+  String get surveyExpensesSection => _getString(AppStringsEn.surveyExpensesSection, AppStringsHi.surveyExpensesSection, AppStringsGu.surveyExpensesSection);
+  String get addExpenseToSurvey => _getString(AppStringsEn.addExpenseToSurvey, AppStringsHi.addExpenseToSurvey, AppStringsGu.addExpenseToSurvey);
+  String get noExpensesForSurvey => _getString(AppStringsEn.noExpensesForSurvey, AppStringsHi.noExpensesForSurvey, AppStringsGu.noExpensesForSurvey);
+  String get tapToAddExpense => _getString(AppStringsEn.tapToAddExpense, AppStringsHi.tapToAddExpense, AppStringsGu.tapToAddExpense);
+
+  // ==================== Expense Screen - Calendar Picker ====================
+  String get selectDateToView => _getString(AppStringsEn.selectDateToView, AppStringsHi.selectDateToView, AppStringsGu.selectDateToView);
+  String get jumpToDate => _getString(AppStringsEn.jumpToDate, AppStringsHi.jumpToDate, AppStringsGu.jumpToDate);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

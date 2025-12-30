@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -59,6 +60,69 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         );
   }
 
+  void _showBlockedUserDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        icon: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.error.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.block,
+            color: AppColors.error,
+            size: 48,
+          ),
+        ),
+        title: const Text(
+          'Account Blocked',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Your account has been blocked by the administrator.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Please contact the developer for assistance.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('OK'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -68,7 +132,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.isAuthenticated) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.surveyList);
+        // Clear entire navigation stack to prevent back navigation to login
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          AppRoutes.surveyList,
+          (route) => false,
+        );
+      } else if (next.isUserBlocked) {
+        // Show blocked user dialog
+        _showBlockedUserDialog();
+        ref.read(authProvider.notifier).clearError();
       } else if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -122,24 +194,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     child: Column(
                       children: [
                         // App Logo
-                        Container(
-                          width: 90,
+                        SizedBox(
                           height: 90,
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurface : AppColors.surface,
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isDark ? AppColors.darkShadow : AppColors.shadow,
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.map_outlined,
-                            size: 50,
-                            color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                          width: 90,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(200), // Match the container's radius
+                            child: Image.asset(
+                              "assets/images/playstore.png",
+                              fit: BoxFit.cover, // Ensures the image fills the container
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -166,7 +229,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.05),
+                  SizedBox(height: size.height * 0.02),
 
                   // Login Card
                   FadeTransition(
@@ -328,73 +391,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                                 color: Colors.white,
                                               ),
                                             ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              // Divider
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      color: isDark ? AppColors.darkDivider : AppColors.divider,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 16),
-                                    child: Text(
-                                      loc.or,
-                                      style: TextStyle(
-                                        color: isDark 
-                                            ? AppColors.darkTextSecondary 
-                                            : AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: isDark ? AppColors.darkDivider : AppColors.divider,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              // Phone Login Button
-                              SizedBox(
-                                height: 56,
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pushNamed(AppRoutes.phoneLogin);
-                                  },
-                                  icon: Icon(
-                                    Icons.phone_outlined,
-                                    color: isDark
-                                        ? AppColors.darkOnSurfaceVariant
-                                        : AppColors.onSurfaceVariant,
-                                  ),
-                                  label: Text(
-                                    loc.loginWithPhone,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: isDark
-                                          ? AppColors.darkOnSurfaceVariant
-                                          : AppColors.onSurfaceVariant,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    side: BorderSide(
-                                      color: isDark ? AppColors.darkOutline : AppColors.outline,
                                     ),
                                   ),
                                 ),

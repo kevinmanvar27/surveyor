@@ -24,6 +24,7 @@ class AuthState {
   final String? verificationId;
   final bool isOtpSent;
   final bool isDemoMode;
+  final bool isUserBlocked; // Track if user is blocked
   
   const AuthState({
     this.status = AuthStatus.initial,
@@ -33,6 +34,7 @@ class AuthState {
     this.verificationId,
     this.isOtpSent = false,
     this.isDemoMode = false,
+    this.isUserBlocked = false,
   });
   
   AuthState copyWith({
@@ -43,6 +45,7 @@ class AuthState {
     String? verificationId,
     bool? isOtpSent,
     bool? isDemoMode,
+    bool? isUserBlocked,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -52,6 +55,7 @@ class AuthState {
       verificationId: verificationId ?? this.verificationId,
       isOtpSent: isOtpSent ?? this.isOtpSent,
       isDemoMode: isDemoMode ?? this.isDemoMode,
+      isUserBlocked: isUserBlocked ?? this.isUserBlocked,
     );
   }
   
@@ -116,7 +120,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
   
   // Demo mode sign in - bypasses Firebase
-  Future<void> signInDemo({String? email, String? displayName}) async {
+  Future<void> signInDemo({
+    String? email,
+    String? displayName,
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     
     // Simulate network delay
@@ -128,6 +137,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       email: email ?? 'demo@surveyor.app',
       displayName: displayName ?? 'Demo User',
       phoneNumber: '+91 9876543210',
+      companyName: companyName,
+      profileImageBase64: profileImageBase64,
+      userStatus: UserStatus.activated,
       createdAt: DateTime.now(),
       lastLogin: DateTime.now(),
     );
@@ -156,17 +168,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return;
     }
     
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null, isUserBlocked: false);
     
     try {
       final credential = await repo.signInWithEmail(email, password);
       final user = credential.user;
       if (user != null) {
         final userModel = await repo.getUserData(user.uid);
+        
+        // Check if user is blocked
+        if (userModel != null && userModel.isBlocked) {
+          // Sign out the user immediately
+          await repo.signOut();
+          state = state.copyWith(
+            status: AuthStatus.error,
+            isUserBlocked: true,
+            errorMessage: 'Your account has been blocked. Please contact the developer for assistance.',
+          );
+          return;
+        }
+        
         state = state.copyWith(
           status: AuthStatus.authenticated,
           user: user,
           userModel: userModel,
+          isUserBlocked: false,
         );
       } else {
         state = state.copyWith(
@@ -188,27 +214,47 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
   
   // Email/Password Sign Up
-  Future<void> signUpWithEmail(String email, String password, String name) async {
+  Future<void> signUpWithEmail(
+    String email,
+    String password,
+    String name, {
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
     // Use demo mode if Firebase is not configured
     if (AppConfig.useDemoMode) {
-      await signInDemo(email: email, displayName: name);
+      await signInDemo(
+        email: email,
+        displayName: name,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+      );
       return;
     }
     
     final repo = _authRepository;
     if (repo == null) {
-      await signInDemo(email: email, displayName: name);
+      await signInDemo(
+        email: email,
+        displayName: name,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+      );
       return;
     }
     
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     
     try {
-      final credential = await repo.signUpWithEmail(email, password);
+      final credential = await repo.signUpWithEmailAndData(
+        email: email,
+        password: password,
+        name: name,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+      );
       final user = credential.user;
       if (user != null) {
-        // Update user display name
-        await user.updateDisplayName(name);
         final userModel = await repo.getUserData(user.uid);
         state = state.copyWith(
           status: AuthStatus.authenticated,
@@ -430,6 +476,124 @@ class AuthNotifier extends StateNotifier<AuthState> {
         status: AuthStatus.error,
         errorMessage: e.toString(),
       );
+    }
+  }
+  
+  // Delete Account - deletes user data from Firestore and Firebase Auth
+  Future<bool> deleteAccount() async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    
+    // In demo mode, just reset state
+    if (AppConfig.useDemoMode || state.isDemoMode) {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+      return true;
+    }
+    
+    final repo = _authRepository;
+    if (repo == null) {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+      return true;
+    }
+    
+    try {
+      final userId = state.user?.uid;
+      if (userId != null) {
+        await repo.deleteUserAccount(userId);
+      }
+      state = const AuthState(status: AuthStatus.unauthenticated);
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString(),
+      );
+      return false;
+    }
+  }
+  
+  // Update user profile
+  Future<bool> updateProfile({
+    String? displayName,
+    String? email,
+    String? companyName,
+    String? profileImageBase64,
+  }) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    
+    // In demo mode, just update the state directly
+    if (AppConfig.useDemoMode || state.isDemoMode) {
+      final currentUser = state.userModel;
+      if (currentUser != null) {
+        final updatedUser = UserModel(
+          uid: currentUser.uid,
+          email: email ?? currentUser.email,
+          displayName: displayName ?? currentUser.displayName,
+          phoneNumber: currentUser.phoneNumber,
+          companyName: companyName ?? currentUser.companyName,
+          profileImageBase64: profileImageBase64 ?? currentUser.profileImageBase64,
+          userStatus: currentUser.userStatus,
+          createdAt: currentUser.createdAt,
+          lastLogin: currentUser.lastLogin,
+        );
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          userModel: updatedUser,
+        );
+        return true;
+      }
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: 'No user data found',
+      );
+      return false;
+    }
+    
+    final repo = _authRepository;
+    if (repo == null) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: 'Repository not available',
+      );
+      return false;
+    }
+    
+    try {
+      final userId = state.user?.uid ?? state.userModel?.uid;
+      if (userId == null) {
+        state = state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: 'User ID not found',
+        );
+        return false;
+      }
+      
+      final updatedUser = await repo.updateUserProfile(
+        uid: userId,
+        displayName: displayName,
+        email: email,
+        companyName: companyName,
+        profileImageBase64: profileImageBase64,
+      );
+      
+      if (updatedUser != null) {
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          userModel: updatedUser,
+        );
+        return true;
+      } else {
+        state = state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: 'Failed to update profile',
+        );
+        return false;
+      }
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString(),
+      );
+      return false;
     }
   }
   

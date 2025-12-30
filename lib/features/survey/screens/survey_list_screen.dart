@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/widgets/theme_toggle_button.dart';
 import '../../../core/services/connectivity_service.dart';
+import '../../../core/utils/image_utils.dart';
 import '../../../providers/survey_provider.dart';
-import '../../../providers/invoice_provider.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../data/models/survey_model.dart';
 import '../widgets/survey_card.dart';
 import '../widgets/survey_filter_sheet.dart';
@@ -36,12 +37,12 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
     
     // Initialize animations
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     
     _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
     
@@ -109,10 +110,58 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
     );
   }
 
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.logout_rounded, color: AppColors.error),
+            SizedBox(width: 12),
+            Text('Logout'),
+          ],
+        ),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              await ref.read(authProvider.notifier).signOut();
+              if (mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.login,
+                  (route) => false,
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final surveyState = ref.watch(surveyListProvider);
     final isOnline = ref.watch(connectivityStreamProvider).value ?? true;
+    final authState = ref.watch(authProvider);
+    final userModel = authState.userModel;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -121,7 +170,7 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
         slivers: [
           // Stunning App Bar with Gradient
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 220,
             floating: false,
             pinned: true,
             elevation: 0,
@@ -142,7 +191,7 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
-                      fontSize: 24,
+                      fontSize: 20,
                     ),
                   ),
                 ),
@@ -167,25 +216,70 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
                             children: [
                               FadeTransition(
                                 opacity: _fadeAnimation,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Text(
-                                      'Welcome back!',
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                    // Profile Image
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withOpacity(0.2),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.5),
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: ClipOval(
+                                        child: userModel?.profileImageBase64 != null &&
+                                                ImageUtils.isValidBase64(userModel!.profileImageBase64)
+                                            ? Image.memory(
+                                                ImageUtils.base64ToBytes(userModel.profileImageBase64!)!,
+                                                fit: BoxFit.cover,
+                                                width: 50,
+                                                height: 50,
+                                                errorBuilder: (context, error, stackTrace) =>
+                                                    const Icon(
+                                                      Icons.person,
+                                                      color: Colors.white,
+                                                      size: 28,
+                                                    ),
+                                              )
+                                            : const Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                                size: 28,
+                                              ),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    const Text(
-                                      'Manage your surveys',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                    const SizedBox(width: 12),
+                                    // Company Name and Welcome Text
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Welcome back!',
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(0.9),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        SizedBox(
+                                          width: 150,
+                                          child: Text(
+                                            userModel?.companyName ?? 'Your Company',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -194,22 +288,58 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
                                 opacity: _fadeAnimation,
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.filter_list_rounded,
-                                        color: Colors.white,
-                                        size: 28,
+                                    InkWell(
+                                      onTap: _showFilterSheet,
+                                      child: Column(
+                                        children: [
+                                           Icon(
+                                              Icons.filter_list_rounded,
+                                              color: Colors.white,
+                                              size: 28,
+                                            ),
+                                          Text(
+                                            'Filter',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      onPressed: _showFilterSheet,
                                     ),
-                                    const SizedBox(width: 8),
-                                    const ThemeToggleButton(),
+                                    const SizedBox(width: 12),
+                                    InkWell(
+                                      onTap: () => Navigator.pushNamed(context, AppRoutes.settings),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                              Icons.settings_rounded,
+                                              color: Colors.white,
+                                              size: 26,
+                                            ),
+                                          Text(
+                                            'Settings',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 9),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                          const Spacer(),
+                          SizedBox(height: 20,),
                           // Stats Cards
                           SlideTransition(
                             position: _slideAnimation,
@@ -280,7 +410,6 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
           _buildSurveyList(surveyState),
         ],
       ),
-      
       // Stunning FAB
       floatingActionButton: ScaleTransition(
         scale: _fabScaleAnimation,
@@ -378,22 +507,28 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: textColor, size: 20),
-            const SizedBox(height: 6),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+            Row(
+              children: [
+                Icon(icon, color: textColor, size: 20),
+                const SizedBox(height: 6),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                  ),
                 ),
-                maxLines: 1,
-              ),
+              ],
             ),
-            const SizedBox(height: 2),
+
+            // const SizedBox(height: 2),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -528,55 +663,95 @@ class _SurveyListScreenState extends ConsumerState<SurveyListScreen>
       );
     }
 
+    final surveys = surveyState.filteredSurveys;
+
+    if (surveys.isEmpty) {
+       return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off, size: 64, color: AppColors.textSecondary.withOpacity(0.5)),
+              const SizedBox(height: 16),
+              Text(
+                'No matching surveys found',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            if (index < surveyState.surveys.length) {
+            if (index < surveys.length) {
               return FadeTransition(
                 opacity: _fadeAnimation,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: Offset(0, 0.1 * (index + 1)),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Interval(
-                      0.1 * index,
-                      0.1 * index + 0.5,
-                      curve: Curves.easeOutCubic,
-                    ),
-                  )),
+                  position: _slideAnimation,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: SurveyCard(
-                      survey: surveyState.surveys[index],
+                      survey: surveys[index],
                       onTap: () => Navigator.pushNamed(
                         context,
-                        AppRoutes.surveyForm,
-                        arguments: {'surveyId': surveyState.surveys[index].id},
+                        AppRoutes.surveyDetail,
+                        arguments: {'surveyId': surveys[index].id},
                       ),
-                      onGenerateInvoice: () => ref
-                          .read(invoiceProvider.notifier)
-                          .generateInvoice(surveyState.surveys[index]),
+                      onEdit: () {
+                        debugPrint('[EDIT_BTN] Navigating to survey form for surveyId: ${surveys[index].id}');
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.surveyForm,
+                          arguments: {'surveyId': surveys[index].id},
+                        );
+                      },
+                      onGenerateInvoice: () {
+                        // Check if survey is marked as done first
+                        if (surveys[index].status != SurveyStatus.done) {
+                          debugPrint('[INVOICE_BTN] Status validation failed - survey not marked as done (surveyId: ${surveys[index].id}, status: ${surveys[index].status})');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please mark survey as done first'),
+                              backgroundColor: AppColors.warning,
+                            ),
+                          );
+                          return;
+                        }
+                        // Then check if payment is pending
+                        if (surveys[index].pendingPayment > 0) {
+                          debugPrint('[INVOICE_BTN] Payment validation failed - pending payment: ₹${surveys[index].pendingPayment} (surveyId: ${surveys[index].id})');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Order is pending first clear payment'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                          return;
+                        }
+                        debugPrint('[INVOICE_BTN] Navigating to invoice screen for surveyId: ${surveys[index].id}');
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.invoice,
+                          arguments: {'surveyId': surveys[index].id},
+                        );
+                      },
                     ),
-                  ),
-                ),
-              );
-            } else if (surveyState.hasMore && !surveyState.isLoading) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   ),
                 ),
               );
             }
             return null;
           },
-          childCount: surveyState.surveys.length + (surveyState.hasMore ? 1 : 0),
+          childCount: surveys.length,
         ),
       ),
     );

@@ -50,8 +50,8 @@ class DefaultFirebaseOptions {
 
   /// Android Firebase Options
   static FirebaseOptions get android => FirebaseOptions(
-    apiKey: EnvConfig.firebaseApiKey,
-    appId: EnvConfig.firebaseAppId,
+    apiKey: EnvConfig.firebaseApiKeyAndroid,
+    appId: EnvConfig.firebaseAppIdAndroid,
     messagingSenderId: EnvConfig.firebaseMessagingSenderId,
     projectId: EnvConfig.firebaseProjectId,
     storageBucket: EnvConfig.firebaseStorageBucket,
@@ -59,8 +59,8 @@ class DefaultFirebaseOptions {
 
   /// iOS Firebase Options
   static FirebaseOptions get ios => FirebaseOptions(
-    apiKey: EnvConfig.firebaseApiKey,
-    appId: EnvConfig.firebaseAppId,
+    apiKey: EnvConfig.firebaseApiKeyIos,
+    appId: EnvConfig.firebaseAppIdIos,
     messagingSenderId: EnvConfig.firebaseMessagingSenderId,
     projectId: EnvConfig.firebaseProjectId,
     storageBucket: EnvConfig.firebaseStorageBucket,
@@ -69,8 +69,8 @@ class DefaultFirebaseOptions {
 
   /// macOS Firebase Options
   static FirebaseOptions get macos => FirebaseOptions(
-    apiKey: EnvConfig.firebaseApiKey,
-    appId: EnvConfig.firebaseAppId,
+    apiKey: EnvConfig.firebaseApiKeyIos,
+    appId: EnvConfig.firebaseAppIdIos,
     messagingSenderId: EnvConfig.firebaseMessagingSenderId,
     projectId: EnvConfig.firebaseProjectId,
     storageBucket: EnvConfig.firebaseStorageBucket,
